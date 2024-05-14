@@ -141,8 +141,8 @@
 
 
 
-
-
+<!-- chatbox dialog -->
+<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
@@ -159,6 +159,16 @@
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"></script>
 <script src="/congkhai/pageClient/fe/js/main.js"></script>
+
+
+<df-messenger
+  intent="WELCOME"
+  chat-title="dungchinh_xedap"
+  agent-id="c30d3711-3014-47d8-b6a2-6fdb49c5c152"
+  language-code="vi"
+></df-messenger>
+
+
 
   <!-- Mã nhúng Messenger -->
   <div id="fb-root"></div>
@@ -241,10 +251,9 @@
     } else {
         document.querySelector("#Username").classList.add("display-none");
         document.cookie = "Username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
     }
 
-    // ]]>
+
 </script>
 </body>
 

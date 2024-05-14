@@ -1,6 +1,45 @@
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
-const saltRounds = 10; 
+const saltRounds = 10;
+const crypto = require("crypto")
+require("dotenv").config();
+
+
+
+
+function generateRandomString(length) {
+    return crypto.randomBytes(Math.ceil(length / 2))
+        .toString('hex') // convert to hexadecimal format
+        .slice(0, length); // return required number of characters
+}
+
+
+
+async function verifyCaptchaToken(token) {
+    const fetch = await import('node-fetch'); // Sử dụng import() động
+    const url = `https://www.google.com/recaptcha/api/siteverify`; // URL của Google reCAPTCHA API
+    const secretKey = process.env.SECRET_KEY; // Thay YOUR_RECAPTCHA_SECRET_KEY bằng secret key của bạn
+
+    try {
+        const response = await fetch.default(url, { // Sử dụng fetch.default vì fetch là một object module
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `secret=${secretKey}&response=${token}`
+        });
+
+        if (!response.ok) {
+            throw new Error('Không thể xác minh mã token reCAPTCHA');
+        }
+
+        const data = await response.json();
+        return data.success;
+    } catch (error) {
+        console.error('Lỗi khi xác minh mã token reCAPTCHA:', error);
+        return false;
+    }
+}
 
 const validateRegistration = (firstName, lastName, email, password) => {
     const schema = Joi.object({
@@ -59,4 +98,4 @@ const hashPassword = async (password) => {
 
 
 
-module.exports = { validateRegistration , validateSignin , hashPassword , comparePassword};
+module.exports = { validateRegistration , validateSignin , hashPassword , comparePassword , verifyCaptchaToken , generateRandomString} ;

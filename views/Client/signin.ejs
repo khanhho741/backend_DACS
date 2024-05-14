@@ -46,6 +46,11 @@
                       </div>
                     </div>
                   </div>
+
+                  <!-- captcha -->
+                  <div class="g-recaptcha" data-sitekey="6LeIX8opAAAAAEJpYg83aaB9yjPEtJo-9b2T_vhr"></div>
+
+
                   <div class="col-12">
                     <div class="d-grid">
                       <button class="btn btn-danger btn-lg btn-submit" type="submit">Đăng nhập</button>
@@ -63,9 +68,8 @@
             </div>
             <div class="col-12 col-lg-5 d-flex align-items-center">
               <div class="d-flex gap-3 flex-column w-100 ">
-                <a href="#" class="text-center"><img
-                    src="/congkhai/pageClient/fe/images/Satelite Bike.png" alt="" width="200px"
-                    height="100%"></a>
+                <a href="#" class="text-center"><img src="/congkhai/pageClient/fe/images/Satelite Bike.png" alt=""
+                    width="200px" height="100%"></a>
                 <a href="/api/auth/google" class="btn btn-lg btn-danger">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                     class="bi bi-google" viewBox="0 0 16 16">
@@ -101,9 +105,19 @@
 
         e.preventDefault();
 
+        // Lấy token reCAPTCHA
+        const recaptchaToken = grecaptcha.getResponse();
+        console.log(recaptchaToken)
+        // Kiểm tra xem token có tồn tại không
+        if (!recaptchaToken) {
+          alert("Vui lòng xác minh bạn không phải là robot!");
+          return;
+        }
+
         const formData = {
           email: email.value,
-          password: password.value
+          password: password.value,
+          recaptchaToken: recaptchaToken,
         };
 
         try {
@@ -118,11 +132,14 @@
           if (response.ok) {
             alert(responseData.message)
             localStorage.setItem("Username", responseData.Username)
-            window.location.reload()
+            window.location.href = "/shop";
           } else if (response.status === 404) {
             alert(responseData.message)
-          } else if (response.status === 401)
+          } else if (response.status === 401) {
             alert(responseData.message)
+          }else if (response.status === 402){
+            alert(responseData.message)
+          }
           else {
             console.error('Error:', response.statusText);
           }
@@ -131,6 +148,7 @@
         }
 
       });
+
 
       // Thêm hàm handleAuthGoogle để gửi yêu cầu khi click vào thẻ span
       async function handleAuthGoogle() {

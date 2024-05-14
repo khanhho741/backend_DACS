@@ -1,0 +1,13 @@
+<%- include('../Client/layout/header.ejs') %>
+<% if (code === "00") { %>
+    <p><%= code%></p>
+    <p style="text-align: center;">GD thành công</p>
+<% } else { %>
+    <p><%= code%></p>
+    <p style="text-align: center; color: red;">GD thất bại</p>
+<% } %>
+
+<p style="text-align: center;">
+    <a class="btn btn-default" href="/shop">Về danh sách</a>
+</p>
+<%- include('../Client/layout/footer.ejs') %>

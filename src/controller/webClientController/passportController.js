@@ -10,16 +10,15 @@ let loginSuccess = async (req, res) => {
 
   try {
     console.log(req.user)
-    const {userEmai , family_name} = req.user._json
+    const {email , family_name} = req.user._json
     const { id } = req.user;
+    console.log(email , family_name , id )
     const connection = await pool.getConnection(); // Lấy kết nối từ pool
 
-    const [existingUser] = await connection.query("SELECT * FROM user where Username = ? && id = ? "
-    ,[family_name,id]);
+    const [existingUser] = await connection.query("SELECT * FROM user where Username = ? && id = ? ",[family_name,id]);
     
-    const verify = await comparePassword(id , existingUser[0].Password)
     
-    if (existingUser.length > 0 && verify === true) {
+    if (existingUser.length > 0 ) {
       const accessToken = await generateAccessToken(existingUser[0].Username , existingUser[0].Check);
       res.cookie('Token', accessToken ); 
       res.cookie('Username', existingUser[0].Username.toString() ); 
@@ -34,8 +33,7 @@ let loginSuccess = async (req, res) => {
    
       // Thêm người dùng vào bảng user
       await connection.query(
-        "INSERT INTO user (Username, Email, Password, `Check`, id) VALUES (?, ?, ?, ?, ?)",
-        [family_name, userEmail, hashedPassword1, 1, id]
+        "INSERT INTO user (Username, Email, Password, `Check`, id) VALUES (?, ?, ?, ?, ?)", [family_name, email , hashedPassword1, 1, id]
       );
 
       // Thêm tạo bảng images
@@ -56,9 +54,13 @@ let loginSuccess = async (req, res) => {
 
       // Commit transaction nếu mọi thứ thành công
       await connection.commit();
-      res
-        .status(201)
-        .json({ message: "Tạo tài khoản và đăng nhập thành công" });
+
+      // đăng nhập
+      const accessToken = await generateAccessToken(existingUser[0].Username , existingUser[0].Check);
+      res.cookie('Token', accessToken ); 
+      res.cookie('Username', existingUser[0].Username.toString() ); 
+      return res.redirect("/home");
+
     } catch (error) {
       await connection.rollback();
       console.error("Error inserting data:", error);

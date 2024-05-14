@@ -1,5 +1,4 @@
 const express = require('express')
-const bodyParser = require('body-parser');
 const app = express()
 const path = require("path")
 const webAdmin = require("./router/webAdmin")
@@ -12,22 +11,35 @@ require('../config/cookieParser')(app, express);
 require('./services/passport')
 const {errorHandlerNotFound , errorHandler} = require("./utils/errorHandler")
 
-configeViewEngine(app, path, __dirname)
-configeFileStatic(app,path,__dirname)
+  configeViewEngine(app, path, __dirname)
+  configeFileStatic(app,path,__dirname)
+  configeBodyParser(app)
+  
+app.use(cors({
+  origin : "http://localhost:8082"
+}));
+// Handle preflight requests
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.status(200).send();
+});
+
+  
 
 
 // configure dotenv
 require('dotenv').config()
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 const port = process.env.PORT || 3000
 
-app.use('/api/auth',authGoogle)
-app.use('/',webAdmin)
-app.use('/',webClient)
-app.use(errorHandlerNotFound , errorHandler)
+  app.use('/api/auth',authGoogle)
+  app.use('/api/zalo',zaloPay)
+  app.use('/api/vnpay',vnPay)
+  app.use('/',webAdmin)
+  app.use('/',webClient)
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+  app.use(errorHandlerNotFound , errorHandler)
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+  })

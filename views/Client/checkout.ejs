@@ -76,11 +76,15 @@
             </div>
         </div>
     </section>
-
+    <form action="http://localhost:8082/api/vnpay/create_payment_url" method="post">
+      
+        <input type="submit" fdfdafdafda>
+    </form>
+  
+<a href="http://localhost:8082/api/vnpay/create_payment_url">ckikkkkkkkkkkkkkkkkkkkkkkkkkk</a>
     <%- include('../Client/layout/footer.ejs') %>
 
         <script>
-
 
 
 
@@ -169,13 +173,16 @@
 
 
 
+                let paymentMethod = null;
 
+                document.querySelector(".online-payment-btn").addEventListener("click", function () {
+                    paymentMethod = "online"; // Gán giá trị là "online"
+                });
 
-
-
-
-
-
+                document.querySelector(".cash-on-delivery-btn").addEventListener("click", function () {
+                    paymentMethod = "cash"; // Gán giá trị là "cash"
+                    
+                });
 
 
 
@@ -212,7 +219,7 @@
                         const cartItems = JSON.parse(localStorage.getItem("giohang"));
                         let totalPrice = 0
                         let tongsoluong = 0
-                        cartItems.forEach(item =>{
+                        cartItems.forEach(item => {
                             totalPrice += parseInt(item.soluong) * parseInt(item.Price)
                             tongsoluong += parseInt(item.soluong)
                         })
@@ -222,12 +229,13 @@
                             tenKhachHang: tenKhachHang,
                             soDienThoai: soDienThoai,
                             diaChi: diaChi,
-                            totalPrice : totalPrice ,
-                            tongsoluong : tongsoluong ,
-                            cartItems: cartItems
+                            totalPrice: totalPrice,
+                            tongsoluong: tongsoluong,
+                            cartItems: cartItems , 
+                            paymentMethod : paymentMethod
                         };
 
-                        const response = await fetch("/checkout", {
+                        const response = await fetch("http://localhost:8082/checkout", {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
@@ -238,20 +246,31 @@
                         console.log(response)
                         if (response.status === 200) {
                             alert(responseData.message);
+                            if (localStorage.clearLocalStorage) {
+                                localStorage.clear();
+                            }
                             window.location.href = "https://dungchinh.onrender.com/shop"
                         } else if (response.status === 400) {
                             alert(responseData.message);
-                        }else if(response.status === 410){
+                        } else if (response.status === 410) {
                             alert(responseData.message);
-                        }else if (response.status = 403){
+                        } else if (response.status = 403) {
                             alert(responseData.message);
                         }
                         else if (response.status === 422) {
                             alert(responseData.message);
-                        } else if (response.status === 409) {
+                        }else if(response.status === 421){
+                            if(responseData.message){
+                                alert("rỗng link")
+                            }else{
+                                
+                            }
+                            
+                        }
+                        else if (response.status === 409) {
                             alert(responseData.message);
                             window.location.href = "https://dungchinh.onrender.com/signin"
-                        } 
+                        }
                         else if (response.status === 500) {
                             alert(responseData.message);
                         }

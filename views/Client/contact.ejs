@@ -66,27 +66,25 @@
                                 <p>Nếu bạn có thắc mắc gì, có thể gửi yêu cầu cho chúng tôi, và chúng tôi sẽ liên lạc lại với bạn sớm nhất có thể .</p>
                                 <div class="contact-FormWrapper">
                                     <div class="contact-form">
-                                        <form method="post" action="/sendmail">
                                         <div class="row">
-                                            
                                             <div class="col-sm-12 col-xs-12">
                                                 <div class="input-group">
-                                                    <input required="" type="text" name="name" class="form-control" placeholder="Tên của bạn" aria-describedby="basic-addon1">
+                                                    <input required="" type="text" name="contact[name]" class="form-control" placeholder="Tên của bạn" aria-describedby="basic-addon1">
                                                 </div>
                                             </div>
                                             <div class="col-sm-6 col-xs-12">
                                                 <div class="input-group">
-                                                    <input required="" type="email" name="email" class="form-control" placeholder="Email của bạn" aria-describedby="basic-addon1">
+                                                    <input required="" type="text" name="contact[email]" class="form-control" placeholder="Email của bạn" aria-describedby="basic-addon1">
                                                 </div>
                                             </div>
                                             <div class="col-sm-6 col-xs-12">
                                                 <div class="input-group">
-                                                    <input pattern="[0-9]{10,12}" required="" type="text" name="phone" class="form-control" placeholder="Số điện thoại của bạn" aria-describedby="basic-addon1">
+                                                    <input pattern="[0-9]{10,12}" required="" type="text" name="contact[phone]" class="form-control" placeholder="Số điện thoại của bạn" aria-describedby="basic-addon1">
                                                 </div>
                                             </div>
                                             <div class="col-sm-12 col-xs-12">
                                                 <div class="input-group">
-                                                    <textarea required="" name="body" placeholder="Nội dung"></textarea>
+                                                    <textarea required="" name="contact[body]" placeholder="Nội dung"></textarea>
                                                     <div class="sitebox-recaptcha ">
                                                         This site is protected by reCAPTCHA and the Google
                                                         <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">Privacy Policy</a> 
@@ -95,27 +93,28 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-12 col-xs-12">
-                                                <button type="submit" class="button dark cta-submitform">Gửi cho chúng tôi</button>
+                                                <button class="button dark cta-submitform">Gửi cho chúng tôi</button>
                                             </div>
-                                        
                                         </div>
-                                    </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-lg-6 col-md-12 col-12 content-right">
-                            <div class="contact-map">
-                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.4206985424494!2d106.78252951103353!3d10.855572157683403!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3175276e7ea103df%3A0xb6cf10bb7d719327!2zSFVURUNIIC0gxJDhuqFpIGjhu41jIEPDtG5nIG5naOG7hyBUUC5IQ00gKFRodSBEdWMgQ2FtcHVzKQ!5e0!3m2!1svi!2s!4v1712906823954!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            <div class="col-lg-6 col-md-12 col-12 content-right">
+                                <div class="contact-map">
+                                    <iframe
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.4206985424494!2d106.78252951103353!3d10.855572157683403!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3175276e7ea103df%3A0xb6cf10bb7d719327!2zSFVURUNIIC0gxJDhuqFpIGjhu41jIEPDtG5nIG5naOG7hyBUUC5IQ00gKFRodSBEdWMgQ2FtcHVzKQ!5e0!3m2!1svi!2s!4v1712906823954!5m2!1svi!2s"
+                                        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
 
-<%- include('../Client/layout/footer.ejs') %>
+    <%- include('../Client/layout/footer.ejs') %>
