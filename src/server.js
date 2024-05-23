@@ -1,14 +1,20 @@
 const express = require('express')
 const app = express()
+const cors = require('cors');
 const path = require("path")
+const zaloPay = require("./router/zaloPay.js")
+const vnPay = require("./router/vnPay.js")
 const webAdmin = require("./router/webAdmin")
 const webClient = require("./router/webClient")
 const authGoogle = require("./router/authGoolge.js")
 const configeViewEngine = require("../config/viewEngine")
 const configeFileStatic = require("../config/staticFile")
+const configeBodyParser = require("../config/bodyParser.js")
+
 require("../config/cookieParser")(app,express)
 require('../config/cookieParser')(app, express);
 require('./services/passport')
+
 const {errorHandlerNotFound , errorHandler} = require("./utils/errorHandler")
 
   configeViewEngine(app, path, __dirname)

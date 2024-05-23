@@ -5,6 +5,7 @@ const controllerHome = require("../controller/webClientController/homeController
 const controllerRegister = require("../controller/webClientController/registerController")
 const controllerForgotPassword = require("../controller/webClientController/ForgotPasswordController")
 const controllerShop = require("../controller/webClientController/shopController")
+const controllerDetailProduct = require("../controller/webClientController/detailproductController")
 const controllerContact = require("../controller/webClientController/contactController")
 const controllerBlog = require("../controller/webClientController/blogController")
 const controllerCart = require("../controller/webClientController/cartController")
@@ -43,6 +44,11 @@ router.get("/contact" , controllerContact.getContact)
 router.post("/sendmail", controllerContact.sendEmail);
 // get shop
 router.get("/shop" , controllerShop.getShop)
+
+// detailproduct
+router.get("/detailproduct/:productId" , controllerDetailProduct.getDetailProduct)
+
+
 
 // get cart
 router.get("/cart", controllerCart.getCart) 

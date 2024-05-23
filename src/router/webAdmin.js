@@ -6,6 +6,11 @@ const webAdminControllerProducts = require("../controller/webAdminController/pro
 const webAdminControllerWarehouses = require("../controller/webAdminController/warehouseController");
 const webAdminControllerDashBoard = require("../controller/webAdminController/dashboardController")
 const webAdminControllerCustomer = require("../controller/webAdminController/customerController")
+const webAdminControllerStaff = require("../controller/webAdminController/staffController")
+const webAdminControllerDocument = require("../controller/webAdminController/documentsController")
+const webAdminControllerImported= require("../controller/webAdminController/importedController")
+
+
 const webAdminControllerInvoice = require("../controller/webAdminController/invoiceController")
 
 
@@ -30,9 +35,19 @@ router.get('/admin/v1/accounts/create',webAdminControllerAccounts.getAdminV1Acco
 
 //customer
 router.get('/admin/v1/customer', webAdminControllerCustomer.getAdminV1Customers);
-router.get('/admin/v1/exportToExcel', webAdminControllerCustomer.exportToExcel);
+router.get('/admin/v1/exportToExcelCustomer', webAdminControllerCustomer.exportToExcel);
 
+//staff
+router.get('/admin/v1/staff', webAdminControllerStaff.getAdminV1Staff);
+router.get('/admin/v1/exportToExcelStaff', webAdminControllerStaff.exportToExcel);
 
+//stafftype
+router.get('/admin/v1/stafftype',webAdminControllerStaff.getAdminV1StaffType)
+router.get('/admin/v1/stafftype/create',webAdminControllerStaff.getAdminV1StafftypeCreate)
+router.post('/admin/v1/stafftype/create',webAdminControllerStaff.postAdminV1StafftypeCreate)
+router.get('/admin/v1/stafftype/edit/:id',webAdminControllerStaff.getAdminV1StafftypeEdit)
+router.post('/admin/v1/stafftype/edit/:id',webAdminControllerStaff.postAdminV1StafftypeEdit)
+router.post('/admin/v1/stafftype/delete/:id',webAdminControllerStaff.postAdminV1StafftypeDelete)
 // supplier
 router.get('/admin/v1/supplier',webAdminControllerSupplier.getAdminV1Supplier)
 router.get('/admin/v1/supplier/create',webAdminControllerSupplier.getAdminV1SupplierCreate)
@@ -64,6 +79,7 @@ router.post('/admin/v1/producttype/delete/:id',webAdminControllerProducts.delete
 
 //warehouse
 router.get('/admin/v1/warehouse',webAdminControllerWarehouses.getAdminV1Warehouse)
+router.get('/admin/v1/warehousedetail',webAdminControllerWarehouses.getAdminV1WarehouseDetail)
 router.get('/admin/v1/warehouse/edit/:id',webAdminControllerWarehouses.getAdminV1WarehouseEdit)
 router.get('/admin/v1/warehouse/create',webAdminControllerWarehouses.getAdminV1WarehouseCreate)
 router.post('/admin/v1/warehouse/create',webAdminControllerWarehouses.postAdminV1WarehouseCreate)
@@ -73,6 +89,12 @@ router.post('/admin/v1/warehouse/delete/:id',webAdminControllerWarehouses.postAd
 //invoice
 router.get('/admin/v1/invoice',webAdminControllerInvoice.getAdminV1Invoices)
 router.get('/admin/v1/exportToExcel',webAdminControllerInvoice.exportToExcel)
+
+//imported
+router.get("/admin/v1/imported",webAdminControllerImported.getAdminV1Imported)
+
+//document
+router.get("/admin/v1/document",webAdminControllerDocument.getAdminV1Documents)
 
 
 module.exports = router;

@@ -4,6 +4,10 @@ const moment = require('moment');
 router.post('/create_payment_url', function (req, res, next) {
     process.env.TZ = 'Asia/Ho_Chi_Minh';
     
+    
+    
+    // Tính toán tổng tiền hàng từ thông tin sản phẩm trong giỏ hàng
+    
     let date = new Date();
     let createDate = moment(date).format('YYYYMMDDHHmmss');
     
@@ -19,7 +23,8 @@ router.post('/create_payment_url', function (req, res, next) {
     let returnUrl = config.vnp_ReturnUrl
     
     let orderId = moment(date).format('DDHHmmss');
-    let amount = 10000;
+
+    let amount = 15000;
     let bankCode = "";
     
     let locale = 'vn';

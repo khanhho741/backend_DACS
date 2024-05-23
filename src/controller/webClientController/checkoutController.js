@@ -168,7 +168,7 @@ let thanhtoanonline = async (req, res) => {
     let returnUrl = config.vnp_ReturnUrl
     
     let orderId = moment(date).format('DDHHmmss');
-    let amount = 1000;
+    let amount = parseInt(totalPrice) * 100;
     let bankCode = "VNPAYQR";
     
     let locale = req.body.language;

@@ -189,10 +189,10 @@
                                                         <%= element.ProductName %>
                                                     </h2>
                                                     <p class="product-price">
-                                                        <%= element.Price %>$
+                                                        <%= element.PriceVND %>
                                                     </p>
                                                     <div class="productbtn-box d-flex">
-                                                        <a href="#" class="product-btn">Chi tiết</a>
+                                                        <a href="#" class="product-btn" onclick="redirectToDetailPage('<%= element.IDProduct %>')">Chi tiết</a>
                                                         <button href="#" class="product-buy"
                                                             onclick="updateProduct(<%= JSON.stringify(element) %>) ">Mua
                                                             ngay</button>
@@ -285,7 +285,9 @@
                 document.querySelector(".cart_view").textContent = totalQuantity
             }
 
-            
+            function redirectToDetailPage(productId) {
+                window.location.href = "/detailproduct/" + productId;
+            }
 
 
         </script>

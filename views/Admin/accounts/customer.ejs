@@ -30,7 +30,7 @@
                   <input type="text" name="name" class="form-control-plaintext" id="staticEmail2"
                     placeholder="input field" style="width: 450px !important; height:34px !important;">
                   <button type="submit" class="btn btn-primary mb-5"><i class="fa fa-search"></i></button>
-                  <a href="#" class="btn btn-sm btn-success btn-xuat" onclick="exportExcel()">
+                  <a href="#" class="btn btn-sm btn-success btn-xuat" onclick="exportExcel()" style="display: flex !important; align-items:center !important; justify-content:center !important; gap:5px !important;">
                     <i class="fas fa-file-excel"></i> Xuất Excel
                 </a>
                 </div>
@@ -177,7 +177,7 @@
     });
 
     function exportExcel() {
-      window.location.href = 'http://localhost:8082/admin/v1/exportToExcel/';
+      window.location.href = 'http://localhost:8082/admin/v1/exportToExcelCustomer/';
   }
     </script>
 

@@ -1,0 +1,130 @@
+<%- include('../layout/header.ejs') %>
+<%- include('../layout/aside.ejs') %>
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Quản lý loại nhân viên
+    </h1>
+    <ol class="breadcrumb">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+      <li><a href="#">Examples</a></li>
+      <li class="active">Blank page</li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+
+    <!-- Default box -->
+    <div class="box">
+
+
+      <div class="box-body">
+        <table class="table">
+
+          <form class="form-inline" method="get">
+            <div class="form-group mb-2" style="display: flex; gap:10px;">
+              <label for="staticEmail2" class="sr-only">Email</label>
+              <input type="text" name="name" class="form-control-plaintext" id="staticEmail2"
+                placeholder="input field" style="width: 450px !important; height:34px !important;">
+              <button type="submit" class="btn btn-primary mb-5"><i class="fa fa-search"></i></button>
+              <a href="http://localhost:8082/admin/v1/stafftype/create" class="btn btn-success mb-5"><i
+                  class="fa fa-plus"></i> Create</a>
+            </div>
+          </form>
+
+          <thead>
+            <tr>
+              <th scope="col">ID StaffType</th>
+              <th scope="col">StaffTypeName</th>
+            </tr>
+          </thead>
+          <tbody>
+
+
+            <% dataUser.map((item,index)=>{ %>
+              <th scope="row">
+                <%= item.IDStaffType%>
+              </th>
+
+              <td>
+                <%= item.StaffTypeName%>
+              </td>
+
+              
+
+              <td>
+                <a href="http://localhost:8082/admin/v1/stafftype/edit/<%= item.IDStaffType%>"
+                  class="btn btn-sm btn-primary btn-sua"><i class="fa fa-edit"></i> Sửa</a>
+                 
+                  <a href="#" data-id="<%= item.IDStaffType%>" class="btn btn-sm btn-danger btn-xoa"><i class="fa fa-trash"></i> Xóa</a>
+              </td>
+              </tr>
+              <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+
+      <!-- pagination -->
+      <div class="box-footer">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="?page=<%= page <=1 ? page=1 : page -1 %>">Previous</a>
+            </li>
+            <% for(i=1 ;i<=totalPage;i++) { %>
+              <li class="<%= page == i ? 'active' : '' %>"> <a href="?page=<%=i%>">
+                  <%= i%>
+                </a> </li>
+              <% } %>
+                <li class="page-item"><a class="page-link"
+                    href="?page=<%= page >= totalPage ? totalPage : page+1   %>">Next</a></li>
+          </ul>
+        </nav>
+      </div>
+
+
+    </div>
+
+  </section>
+
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+    // Xử lý sự kiện click trên nút xóa
+    $(".btn-xoa").on("click", function() {
+      // Lấy ID loại sản phẩm từ thuộc tính data-id của nút xóa
+      var productTypeId = $(this).data("id");
+      
+      // Hiển thị cảnh báo để xác nhận việc xóa
+      if (confirm("Bạn có chắc chắn muốn xóa loại nhân viên này không?")) {
+        // Gửi yêu cầu xóa loại sản phẩm đến máy chủ
+        $.ajax({
+          method: "POST",
+          url: "http://localhost:8082/admin/v1/stafftype/delete/" + productTypeId,
+          success: function(response) {
+            // Nếu xóa thành công, reload trang để cập nhật dữ liệu mới
+            location.reload();
+            alert("Xóa loại nhân viên thành công.");
+
+          },
+          error: function(xhr, status, error) {
+            // Xử lý lỗi nếu có
+            console.error("Error:", error);
+            alert("Đã xảy ra lỗi khi xóa nhà cung cấp.");
+          }
+        });
+      }
+    });
+  });
+</script>
+
+<%- include('../layout/footer.ejs')%>
+
+  

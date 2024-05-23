@@ -42,229 +42,194 @@
 
     <%- include('../Client/layout/footer.ejs') %>
 
-        <script>
-
-
-
-
-            document.addEventListener("DOMContentLoaded", function () {
-
-                const gioHangData = localStorage.getItem("giohang");
-                let gioHang = JSON.parse(gioHangData);
-
-                if (gioHang && gioHang.length > 0) {
-
-                    function updateNumItems() {
-                        let newNumItems = 0;
-                        const quantityInputs = document.querySelectorAll('.quantityInput');
-                        quantityInputs.forEach(input => {
-                            newNumItems += parseInt(input.value);
-                        });
-                        document.getElementById("numItems").textContent = newNumItems;
-                    }
-
-
-                    // Render các sản phẩm trong giỏ hàng
-                    const cartItemsContainer = document.getElementById("cartItems");
-                    let numItems = 0;
-                    let totalPrice = 0;
-
-                    if (gioHang) {
-                        gioHang.forEach(item => {
-                            const tr = document.createElement("tr");
-                            const tdProduct = document.createElement("td");
-                            const tdPrice = document.createElement("td");
-                            const tdQuantity = document.createElement("td");
-                            const tdActions = document.createElement("td");
-
-                            tdProduct.innerHTML = `
-                <div class="row">
-                    <div class="col-md-3 text-left">
-                        <img style="width:300px" src="${item.url}" alt="" class="img-fluid d-none d-md-block rounded mb-2 shadow ">
-                    </div>
-                    <div class="col-md-9 text-left mt-sm-2">
-                        <h4>${item.ProductName}</h4>
-                        <p class="font-weight-light">${item.SupplierName}</p>
-                    </div>
-                </div>
-            `;
-                            tdPrice.textContent = item.Price + " USD";
-                            tdQuantity.innerHTML = `
-                <input type="number" id="${item.IDProduct}" min="1" class="form-control form-control-lg text-center quantityInput" value="${item.soluong}">
-            `;
-                            tdActions.innerHTML = `
-                <div class="text-right">
-                    
-                    <button class="btn btn-white border-secondary bg-white btn-md mb-2">
-                        <i class="fas fa-sync"></i>
-                    </button>
-
-                    <button class="btn btn-white border-secondary bg-white btn-md mb-2 " id="deleteBtn">
-                        <input style="display:none" value=${item.IDProduct}></input>
-                        <i class="fas fa-trash"></i>
-                    </button>
-                
-                </div>
-            `;
-
-                            tr.appendChild(tdProduct);
-                            tr.appendChild(tdPrice);
-                            tr.appendChild(tdQuantity);
-                            tr.appendChild(tdActions);
-                            cartItemsContainer.appendChild(tr);
-
-                            numItems += parseInt(item.soluong);
-                            totalPrice += item.Price * item.soluong;
-                        });
-                    }
-
-                    document.getElementById("numItems").textContent = numItems;
-                    document.getElementById("totalPrice").textContent = `${totalPrice.toLocaleString()} USD`;
-
-
-
-
-                    // Lắng nghe sự kiện khi số lượng sản phẩm thay đổi
-                    const quantityInputs = document.querySelectorAll(".quantityInput");
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    
+            // Utility function to convert USD to VND and format it
+            function formatPriceToVND(priceUSD) {
+                const conversionRate = 23000; // Conversion rate from USD to VND
+                const priceVND = priceUSD * conversionRate;
+                return priceVND.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            }
+    
+            const gioHangData = localStorage.getItem("giohang");
+            let gioHang = JSON.parse(gioHangData);
+    
+            if (gioHang && gioHang.length > 0) {
+    
+                function updateNumItems() {
+                    let newNumItems = 0;
+                    const quantityInputs = document.querySelectorAll('.quantityInput');
                     quantityInputs.forEach(input => {
-                        input.addEventListener("change", function () {
-                            if (parseInt(input.value) < 1) {
-                                input.value = 1;
-                            }
-
-                            const productId = input.id;
-                            const newQuantity = parseInt(input.value);
-
-                            let localStorageCart = JSON.parse(localStorage.getItem("giohang")) || [];
-                            localStorageCart.forEach(item => {
-                                if (item.IDProduct === parseInt(productId)) {
-                                    item.soluong = newQuantity;
-                                }
-                            });
-                            localStorage.setItem("giohang", JSON.stringify(localStorageCart));
-
-                            updateTotalPrice();
-                            updateNumItems();
-                        });
+                        newNumItems += parseInt(input.value);
                     });
-
-
-
-
-                    const deleteBtns = document.querySelectorAll("#deleteBtn");
-                    deleteBtns.forEach(btn => {
-                        btn.addEventListener("click", function (e) {
-                            const productId = parseInt(btn.querySelector('input').value);
-
-                            gioHang = gioHang.filter(item => item.IDProduct !== productId);
-
-                            localStorage.setItem("giohang", JSON.stringify(gioHang));
-
-                            btn.closest("tr").remove();
-
-                            updateTotalPrice();
-                            updateNumItems();
-                            changeNumberCart()
-                        });
-                    });
-
-
-                    function updateTotalPrice() {
-                        let newTotalPrice = 0;
-                        quantityInputs.forEach((input, index) => {
-                            const quantity = parseInt(input.value);
-                            const itemPrice = gioHang[index].Price;
-                            newTotalPrice += quantity * itemPrice;
-                        });
-                        document.getElementById("totalPrice").textContent = `${newTotalPrice.toLocaleString()} USD`;
-                        changeNumberCart()
-                    }
-
-                    function updateTotalPrice() {
-                        let newTotalPrice = 0;
-                        quantityInputs.forEach((input, index) => {
-                            console.log(input)
-                            const quantity = parseInt(input.value);
-                            const item = gioHang[index];
-                            if (item && item.Price) { // Kiểm tra xem item có tồn tại và có thuộc tính 'Price' hay không
-                                const itemPrice = item.Price;
-                                newTotalPrice += quantity * itemPrice;
-                            }
-                        });
-                        document.getElementById("totalPrice").textContent = `${newTotalPrice.toLocaleString()} USD`;
-                        changeNumberCart()
-                    }
-
-
-                    function updateNumItems() {
-                        let newNumItems = 0;
-                        const quantityInputs = document.querySelectorAll('.quantityInput');
-                        quantityInputs.forEach(input => {
-                            newNumItems += parseInt(input.value);
-                        });
-                        document.getElementById("numItems").textContent = newNumItems;
-                        changeNumberCart()
-                    }
-
-
-
-                    function changeNumberCart() {
-                        const gioHang = JSON.parse(localStorage.getItem("giohang")) || [];
-                        let totalQuantity = 0;
-                        gioHang.forEach(item => {
-                            totalQuantity += item.soluong;
-                        });
-                        document.querySelector(".cart_view").textContent = totalQuantity
-                    }
-
-
-                } else {
-                    document.querySelector(".container").innerHTML = `    
-                        
-                    <div class="row w-100">
-                <div class="col-lg-12 col-md-12 col-12">
-                    <h2 class="display-5 mb-2 text-center">Giỏ Hàng</h2>
-                    <p class="mb-5 text-center">
-                        <i class="text-danger font-weight-bold" id="numItems"></i> sản phẩm trong giỏ hàng
-                    </p>
-                    <table id="shoppingCart" class="table table-condensed table-responsive">
-                        <thead>
-                            <tr>
-                                <th style="width:60%">Sản phẩm</th>
-                                <th style="width:12%">Giá</th>
-                                <th style="width:10%">Số lượng</th>
-                                <th style="width:16%"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="cartItems">
-                            <!-- Các sản phẩm trong giỏ hàng sẽ được render ở đây -->
-                        </tbody>
-                    </table>
-                    <div class="box-total-right float-right text-right">
-                        <h4>Tổng tiền:</h4>
-                        <h1 id="totalPrice"></h1>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-4 d-flex align-items-center">
-                <div class="col-sm-6 order-md-2">
-                    <a href="/checkout" class="btn-right btn btn-danger mb-4 btn-lg pl-5 pr-5">Mua Hàng</a>
-                </div>
-                <div class="col-sm-6 mb-3 mb-m-1 order-md-1 text-md-left">
-                    <a href="/shop">
-                        <i class="fas fa-arrow-left mr-2"></i> Tiếp tục mua hàng</a>
-                </div>
-            </div>
-        </div>
-         
-                    `
+                    document.getElementById("numItems").textContent = newNumItems;
                 }
-
-
-
-
-            });
-
-
-
-        </script>
+    
+                // Render các sản phẩm trong giỏ hàng
+                const cartItemsContainer = document.getElementById("cartItems");
+                let numItems = 0;
+                let totalPrice = 0;
+    
+                if (gioHang) {
+                    gioHang.forEach(item => {
+                        const tr = document.createElement("tr");
+                        const tdProduct = document.createElement("td");
+                        const tdPrice = document.createElement("td");
+                        const tdQuantity = document.createElement("td");
+                        const tdActions = document.createElement("td");
+    
+                        tdProduct.innerHTML = `
+                            <div class="row">
+                                <div class="col-md-3 text-left">
+                                    <img style="width:300px" src="${item.url}" alt="" class="img-fluid d-none d-md-block rounded mb-2 shadow ">
+                                </div>
+                                <div class="col-md-9 text-left mt-sm-2">
+                                    <h4>${item.ProductName}</h4>
+                                    <p class="font-weight-light">${item.SupplierName}</p>
+                                </div>
+                            </div>
+                        `;
+                        tdPrice.textContent = formatPriceToVND(item.Price);
+                        tdQuantity.innerHTML = `
+                            <input type="number" id="${item.IDProduct}" min="1" class="form-control form-control-lg text-center quantityInput" value="${item.soluong}">
+                        `;
+                        tdActions.innerHTML = `
+                            <div class="text-right">
+                                <button class="btn btn-white border-secondary bg-white btn-md mb-2">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                                <button class="btn btn-white border-secondary bg-white btn-md mb-2 " id="deleteBtn">
+                                    <input style="display:none" value=${item.IDProduct}></input>
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+    
+                        tr.appendChild(tdProduct);
+                        tr.appendChild(tdPrice);
+                        tr.appendChild(tdQuantity);
+                        tr.appendChild(tdActions);
+                        cartItemsContainer.appendChild(tr);
+    
+                        numItems += parseInt(item.soluong);
+                        totalPrice += item.Price * item.soluong;
+                    });
+                }
+    
+                document.getElementById("numItems").textContent = numItems;
+                document.getElementById("totalPrice").textContent = formatPriceToVND(totalPrice);
+    
+                // Lắng nghe sự kiện khi số lượng sản phẩm thay đổi
+                const quantityInputs = document.querySelectorAll(".quantityInput");
+                quantityInputs.forEach(input => {
+                    input.addEventListener("change", function () {
+                        if (parseInt(input.value) < 1) {
+                            input.value = 1;
+                        }
+    
+                        const productId = input.id;
+                        const newQuantity = parseInt(input.value);
+    
+                        let localStorageCart = JSON.parse(localStorage.getItem("giohang")) || [];
+                        localStorageCart.forEach(item => {
+                            if (item.IDProduct === parseInt(productId)) {
+                                item.soluong = newQuantity;
+                            }
+                        });
+                        localStorage.setItem("giohang", JSON.stringify(localStorageCart));
+    
+                        updateTotalPrice();
+                        updateNumItems();
+                    });
+                });
+    
+                const deleteBtns = document.querySelectorAll("#deleteBtn");
+                deleteBtns.forEach(btn => {
+                    btn.addEventListener("click", function (e) {
+                        const productId = parseInt(btn.querySelector('input').value);
+    
+                        gioHang = gioHang.filter(item => item.IDProduct !== productId);
+    
+                        localStorage.setItem("giohang", JSON.stringify(gioHang));
+    
+                        btn.closest("tr").remove();
+    
+                        updateTotalPrice();
+                        updateNumItems();
+                        changeNumberCart();
+                    });
+                });
+    
+                function updateTotalPrice() {
+                    let newTotalPrice = 0;
+                    quantityInputs.forEach((input, index) => {
+                        const quantity = parseInt(input.value);
+                        const item = gioHang[index];
+                        if (item && item.Price) { // Kiểm tra xem item có tồn tại và có thuộc tính 'Price' hay không
+                            const itemPrice = item.Price;
+                            newTotalPrice += quantity * itemPrice;
+                        }
+                    });
+                    document.getElementById("totalPrice").textContent = formatPriceToVND(newTotalPrice);
+                    changeNumberCart();
+                }
+    
+                function updateNumItems() {
+                    let newNumItems = 0;
+                    const quantityInputs = document.querySelectorAll('.quantityInput');
+                    quantityInputs.forEach(input => {
+                        newNumItems += parseInt(input.value);
+                    });
+                    document.getElementById("numItems").textContent = newNumItems;
+                    changeNumberCart();
+                }
+    
+                function changeNumberCart() {
+                    const gioHang = JSON.parse(localStorage.getItem("giohang")) || [];
+                    let totalQuantity = 0;
+                    gioHang.forEach(item => {
+                        totalQuantity += item.soluong;
+                    });
+                    document.querySelector(".cart_view").textContent = totalQuantity;
+                }
+            } else {
+                document.querySelector(".container").innerHTML = `
+                    <div class="row w-100">
+                        <div class="col-lg-12 col-md-12 col-12">
+                            <h2 class="display-5 mb-2 text-center">Giỏ Hàng</h2>
+                            <p class="mb-5 text-center">
+                                <i class="text-danger font-weight-bold" id="numItems"></i> sản phẩm trong giỏ hàng
+                            </p>
+                            <table id="shoppingCart" class="table table-condensed table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th style="width:60%">Sản phẩm</th>
+                                        <th style="width:12%">Giá</th>
+                                        <th style="width:10%">Số lượng</th>
+                                        <th style="width:16%"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cartItems">
+                                    <!-- Các sản phẩm trong giỏ hàng sẽ được render ở đây -->
+                                </tbody>
+                            </table>
+                            <div class="box-total-right float-right text-right">
+                                <h4>Tổng tiền:</h4>
+                                <h1 id="totalPrice"></h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4 d-flex align-items-center">
+                        <div class="col-sm-6 order-md-2">
+                            <a href="/checkout" class="btn-right btn btn-danger mb-4 btn-lg pl-5 pr-5">Mua Hàng</a>
+                        </div>
+                        <div class="col-sm-6 mb-3 mb-m-1 order-md-1 text-md-left">
+                            <a href="/shop">
+                                <i class="fas fa-arrow-left mr-2"></i> Tiếp tục mua hàng</a>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+    </script>

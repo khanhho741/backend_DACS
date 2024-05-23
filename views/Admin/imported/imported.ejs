@@ -5,7 +5,7 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Quản lý chi tiết kho
+      Quản lý nhập hàng
     </h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -30,15 +30,16 @@
               <input type="text" name="name" class="form-control-plaintext" id="staticEmail2"
                 placeholder="input field" style="width: 450px !important; height:34px !important;">
               <button type="submit" class="btn btn-primary mb-5"><i class="fa fa-search"></i></button>
-              
+              <a href="http://localhost:8082/admin/v1/imported/create" class="btn btn-success mb-5"><i class="fa-solid fa-truck-fast"></i> Nhập hàng</a>
             </div>
           </form>
 
           <thead>
             <tr>
+              <th scope="col">IDImportedProducts</th>
+              <th scope="col">IDStaff</th>
               <th scope="col">IDWarehouse</th>
-              <th scope="col">IDProduct</th>
-              <th scope="col">QuantityInStock</th>
+              <th scope="col">DateCreated</th>
             </tr>
           </thead>
           <tbody>
@@ -46,21 +47,26 @@
 
             <% dataUser.map((item,index)=>{ %>
               <th scope="row">
-                <%= item.IDWarehouse%>
+                <%= item.IDImportedProducts%>
               </th>
 
               <td>
-                <%= item.IDProduct%>
+                <%= item.IDStaff%>
               </td>
 
               <td>
-                <%= item.QuantityInStock%>
+                <%= item.IDWarehouse%>
               </td>
 
-             
+              <td><%= item.DateCreated%></td>
 
             
-             
+              <td>
+                <a href="http://localhost:8082/admin/v1/imported/edit/<%= item.IDImportedProducts%>"
+                  class="btn btn-sm btn-primary btn-sua"><i class="fa fa-edit"></i> Edit</a>
+                 
+                  <a href="#" data-id="<%= item.IDImportedProducts%>" class="btn btn-sm btn-danger btn-xoa"><i class="fa fa-trash"></i> Delete</a>
+              </td>
               </tr>
               <% }) %>
           </tbody>
@@ -97,7 +103,31 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
   
- 
+  $(document).ready(function() {
+    // Xử lý sự kiện click trên nút xóa
+    $(".btn-xoa").on("click", function() {
+      // Lấy ID loại sản phẩm từ thuộc tính data-id của nút xóa
+      var warehouseId = $(this).data("id");
+      
+      // Hiển thị cảnh báo để xác nhận việc xóa
+      if (confirm("Bạn có chắc chắn muốn xóa kho này không?")) {
+        // Gửi yêu cầu xóa loại sản phẩm đến máy chủ
+        $.ajax({
+          method: "POST",
+          url: "http://localhost:8082/admin/v1/imported/delete/" + warehouseId,
+          success: function(response) {
+            // Nếu xóa thành công, reload trang để cập nhật dữ liệu mới
+            location.reload();
+          },
+          error: function(xhr, status, error) {
+            // Xử lý lỗi nếu có
+            console.error("Error:", error);
+            alert("Đã xảy ra lỗi khi xóa kho.");
+          }
+        });
+      }
+    });
+  });
 </script>
 
 <%- include('../layout/footer.ejs')%>
