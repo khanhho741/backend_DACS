@@ -9,7 +9,7 @@ const webAdminControllerCustomer = require("../controller/webAdminController/cus
 const webAdminControllerStaff = require("../controller/webAdminController/staffController")
 const webAdminControllerDocument = require("../controller/webAdminController/documentsController")
 const webAdminControllerImported= require("../controller/webAdminController/importedController")
-
+const webAdminControllerDeliveryNotes = require("../controller/webAdminController/deliverynoteController")
 
 const webAdminControllerInvoice = require("../controller/webAdminController/invoiceController")
 
@@ -40,9 +40,12 @@ router.get('/admin/v1/exportToExcelCustomer', webAdminControllerCustomer.exportT
 //staff
 router.get('/admin/v1/staff', webAdminControllerStaff.getAdminV1Staff);
 router.get('/admin/v1/exportToExcelStaff', webAdminControllerStaff.exportToExcel);
+router.get('/admin/v1/staff/edit/:id', webAdminControllerStaff.getAdminV1StaffEdit);
+router.post('/admin/v1/staff/edit/:id', webAdminControllerStaff.postAdminV1StaffEdit);
 
 //stafftype
 router.get('/admin/v1/stafftype',webAdminControllerStaff.getAdminV1StaffType)
+router.get('/admin/v1/stafftypes',webAdminControllerStaff.getAdminV1StaffTypes)
 router.get('/admin/v1/stafftype/create',webAdminControllerStaff.getAdminV1StafftypeCreate)
 router.post('/admin/v1/stafftype/create',webAdminControllerStaff.postAdminV1StafftypeCreate)
 router.get('/admin/v1/stafftype/edit/:id',webAdminControllerStaff.getAdminV1StafftypeEdit)
@@ -89,9 +92,14 @@ router.post('/admin/v1/warehouse/delete/:id',webAdminControllerWarehouses.postAd
 //invoice
 router.get('/admin/v1/invoice',webAdminControllerInvoice.getAdminV1Invoices)
 router.get('/admin/v1/exportToExcel',webAdminControllerInvoice.exportToExcel)
+router.post('/admin/v1/invoice/upgrade_to_one_from_two/:id',webAdminControllerInvoice.upgrade_to_one_from_two)
 
 //imported
 router.get("/admin/v1/imported",webAdminControllerImported.getAdminV1Imported)
+
+// deliveryNotes
+router.get("/admin/v1/deliverynotes",webAdminControllerDeliveryNotes.getDeliveryNote)
+router.post("/admin/v1/deliverynotes/edit/:id",webAdminControllerDeliveryNotes.postDeliveryNote)
 
 //document
 router.get("/admin/v1/document",webAdminControllerDocument.getAdminV1Documents)

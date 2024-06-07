@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="/congkhai/pageClient/fe/css/account.css">
   <link rel="stylesheet" href="/congkhai/pageClient/fe/css/shop.css">
   <link rel="stylesheet" href="/congkhai/pageClient/fe/css/blog.css">
+  <link rel="stylesheet" href="/congkhai/pageClient/fe/css/guild.css">
+
   <link rel="stylesheet" href="/congkhai/pageClient/fe/css/contact.css">
   <link rel="stylesheet" href="/congkhai/pageClient/fe/css/detailproduct.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -96,15 +98,21 @@
 
 
               <li class="nav-item mx-2">
-                <a class="nav-link text-dark" href="#"><i class='bx bx-search-alt-2'></i></a>
-              </li>
-
-              <li class="nav-item mx-2">
-                <a class="nav-link text-dark " href="/cart">
-                  <i class='bx bxs-shopping-bag'> </i>
-                  <span class="cart_view"> 3 </span>
+                <a class="nav-link text-dark" href="#" id="searchPopover" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="<form class='form-inline my-2 my-lg-0'>
+                  <input class='form-control mr-sm-2' type='search' placeholder='Search' aria-label='Search'>
+                </form>">
+                  <i class='bx bx-search-alt-2'></i>
                 </a>
               </li>
+
+              
+
+              <li class="nav-item mx-2">
+                <a class="nav-link text-dark" href="/cart">
+                    <i class='bx bxs-shopping-bag'></i>
+                    <span class="cart_view">0</span>
+                </a>
+            </li>
 
             </ul>
           </div>
@@ -115,3 +123,60 @@
 
 
   </Header>
+
+
+
+  <a href="#" class="scrollTop" id="buttonTop"><i class='bx bx-up-arrow-alt' style="font-size: 30px !important;"></i></a>
+
+  <script>
+    var mybutton = document.getElementById("buttonTop");
+  
+    window.onscroll = function() {
+      scrollFuncition()
+    }
+
+    function scrollFuncition() {
+      if(document.body.scroll > 500 || document.documentElement.scrollTop > 500) {
+        mybutton.style.display = "block";
+      }
+      else {
+        mybutton.style.display = "none";
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+      var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        return new bootstrap.Popover(popoverTriggerEl, {
+          html: true,
+          sanitize: false,
+          placement: 'bottom',
+        boundary: 'viewport'
+        })
+      })
+    });
+  
+    document.addEventListener("DOMContentLoaded", function() {
+      // Kiểm tra xem có dữ liệu trong localStorage không
+      if (localStorage.getItem("giohang")) {
+          // Lấy dữ liệu từ localStorage và chuyển đổi thành mảng JavaScript
+          var cartItems = JSON.parse(localStorage.getItem("giohang"));
+  
+          // Tính tổng số lượng sản phẩm trong giỏ hàng
+          var totalItems = cartItems.reduce(function(total, item) {
+              return total + parseInt(item.soluong);
+          }, 0);
+  
+          // Cập nhật số lượng sản phẩm trong span cart_view
+          document.querySelector(".cart_view").textContent = totalItems;
+      } else {
+          // Nếu giỏ hàng trống, đặt số lượng sản phẩm trong span cart_view là 0
+          document.querySelector(".cart_view").textContent = 0;
+      }
+  });
+  
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+    integrity="sha384-IQsoLXlNHj/8i/mS+JbQa5Pc4ILdIuvvg+2K5LG9lvrsEu9gIMpD5Bsi5eE7amwp" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+    integrity="sha384-cVKIPhGLeiJ6FdBgGY+Vr56vylq3tvk7+2K5LG9lvrsEu9gIMpD5Bsi5eE7amwp" crossorigin="anonymous"></script>

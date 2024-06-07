@@ -1,0 +1,99 @@
+<%- include('../layout/header.ejs') %>
+<%- include('../layout/aside.ejs') %>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Quản lý nhân viên
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Examples</a></li>
+        <li class="active">Blank page</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="box">
+          <div class="box-body">
+            <form id="editForm" action="http://localhost:8082/admin/v1/staff/edit/<%= row.IDStaff %>" method="post">
+                <div class="form-group">
+                    <label for="IDStaffType">Staff Type</label>
+                    <select name="IDStaffType" class="form-control" id="IDStaffType">
+                      <!-- Options will be populated here by JavaScript -->
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btnSubmit"><i class="fa fa-save"></i> Submit</button>
+                <a href="http://localhost:8082/admin/v1/staff" class="btn btn-default"><i class="fa fa-arrow-left"></i> Back</a>
+            </form>
+          </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    const checkEmpty = () => {
+        const staffTypeInput = document.querySelector("#IDStaffType");
+        return staffTypeInput.value.trim() !== "";
+    };
+
+    const postRequired = async (requestBody) => {
+        const staffId = "<%= row.IDStaff %>";
+        try {
+            const response = await fetch(`http://localhost:8082/admin/v1/staff/edit/${staffId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
+
+            const responseData = await response.json();
+            if (response.ok) {
+                alert(responseData.message);
+                window.location.href = 'http://localhost:8082/admin/v1/staff';
+            } else {
+                alert(responseData.message);
+            }
+        } catch (error) {
+            console.error('Error during fetch:', error);
+        }
+    };
+
+    const loadStaffTypes = async () => {
+        try {
+            const response = await fetch('http://localhost:8082/admin/v1/stafftypes');
+            const staffTypes = await response.json();
+            const staffTypeSelect = document.querySelector("#IDStaffType");
+            
+            staffTypes.forEach(staffType => {
+                const option = document.createElement("option");
+                option.value = staffType.id;
+                option.textContent = staffType.name;
+                if (staffType.id == "<%= row.IDStaffType %>") {
+                    option.selected = true;
+                }
+                staffTypeSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error loading staff types:', error);
+        }
+    };
+
+    document.addEventListener("DOMContentLoaded", loadStaffTypes);
+
+    const editForm = document.querySelector("#editForm");
+    editForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (checkEmpty()) {
+            const requestData = {
+                IDStaffType: document.querySelector("#IDStaffType").value.trim(),
+            };
+            await postRequired(requestData);
+        } else {
+            alert("Không để trống thông tin");
+        }
+    });
+</script>
+<%- include('../layout/footer.ejs') %>

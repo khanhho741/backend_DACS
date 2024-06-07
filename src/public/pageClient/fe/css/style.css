@@ -5,6 +5,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    scroll-behavior: smooth;
 }
 
 body {
@@ -1099,4 +1100,116 @@ textarea.form-control {
     font-weight: 500;
     left: 155px;
     top: 5px;
+}
+
+/* Scroll */
+.scrollTop {
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    height: 56px;
+    width: 56px;
+    box-shadow: rgba(0, 0, 0, 0.24) 1px 4px 15px 0px;
+    background-color: #c60101;
+    color: #fff;
+    border-radius: 50%;
+    border-radius: 1px solid #fff;
+    cursor: pointer;
+    transition: all 0.5s ease 0s;
+    z-index: 10;
+    padding: 13px 13px;
+}
+
+.scrollTop:hover {
+    background-color: #f7f7f7;
+    color: #000;
+}
+
+.dropdown-action {
+    position: relative;
+    
+}
+
+.dropdown-menu-list {
+    position: absolute;
+    top: 50px;
+    right: -20px;
+    z-index: 5;
+    padding: 10px 20px;
+    background: #e1e0e0;
+    width: 200px;
+    box-sizing: 0 5px 25px rgba(0,0,0,0.1);
+    transition: 0.5s;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+    gap: 15px;
+    opacity: 0;
+}
+
+.dropdown-menu-list.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.dropdown-menu-list li {
+    list-style: none;
+}
+
+.dropdown-menu-list li a {
+    text-decoration: none;
+    color: #000;
+    font-size: 16px;
+}
+
+.dropdown-menu-list li a:hover {
+    color: #bf0404;
+}
+
+
+.dropdown-menu-list::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: 85px;
+    width: 20px;
+    height: 20px;
+    background: #e1e0e0;
+    transform: rotate(45deg);
+}
+
+.product-image-container {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .product-image {
+    max-width: 100%;
+    max-height: 60vh;
+    display: block;
+    transition: transform 0.5s;
+    cursor: zoom-in;
+    object-position: center;
+  }
+  
+  .zoomer {
+	position: relative;
+}
+
+  .result {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.6);
+    border-radius: 50%;
+    overflow: hidden;
+    transform: translate(-50%, -50%); /* Đặt vị trí giữa */
+    pointer-events: none;
+}
+
+.hide {
+	display: none;
 }

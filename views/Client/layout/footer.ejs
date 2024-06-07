@@ -241,8 +241,15 @@
         var ulElement = document.querySelector(".menu-icon"); // Lấy thẻ ul
         // Tạo một phần tử li mới
         var newLi = document.createElement("li");
-        newLi.classList.add("nav-item", "mx-2");
-        newLi.innerHTML = `<a class="nav-link text-dark" href="/profile">${decodedString}</a>`;
+        newLi.classList.add("nav-item", "mx-2","dropdown-action");
+        newLi.setAttribute("onmouseover", "menuToggle(true);");
+        newLi.setAttribute("onmouseout", "menuToggle(false);"); 
+        newLi.innerHTML = `<a class="nav-link text-dark" href="/profile">${decodedString}</a>
+        <ul class="dropdown-menu-list">
+            <li><a href="useraccount.html">Thông tin tài khoản</a></li>
+            <li><a href="useraccount.html">Đơn mua</a></li>
+            <li><a href="#" id="logoutButton">Đăng xuất</a></li>
+        </ul>`;
 
         // Chèn phần tử mới vào trước phần tử có id là Username
         ulElement.append(newLi);
@@ -253,7 +260,38 @@
         document.cookie = "Username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     }
 
-
+    function menuToggle(isHovered) {
+        const toggleMenu = document.querySelector('.dropdown-menu-list');
+        if (isHovered) {
+            toggleMenu.classList.add('active');
+        } else {
+            toggleMenu.classList.remove('active');
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const logoutButton = document.getElementById('logoutButton');
+        logoutButton.addEventListener('click', async function () {
+            try {
+                const response = await fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('accessToken') // Add your authorization header here if needed
+                    },
+                });
+                if (response.ok) {
+                    // Xóa token khỏi local storage hoặc cookie nếu cần
+                    localStorage.removeItem('accessToken');
+                    // Chuyển hướng người dùng về trang chủ
+                    window.location.href = "/signin";
+                } else {
+                    console.error('Error logging out');
+                }
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
+        });
+    });
 </script>
 </body>
 

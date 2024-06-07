@@ -16,8 +16,8 @@
                             href="#account-change-password">Đổi mật khẩu</a>
                         <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-info">Đơn
                             mua</a>
-                        <a id="logoutButton" class="list-group-item list-group-item-action"
-                            style="display: flex; align-items:center; gap:5px" data-toggle="list" href="#">Đăng xuất <i
+                        <a href="#" id="logoutButton1" class="list-group-item list-group-item-action"
+                            style="display: flex; align-items:center; gap:5px" >Đăng xuất <i
                                 class='bx bx-log-out'></i>
                         </a>
                     </div>
@@ -62,7 +62,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Ngày sinh</label>
-                                        <input type="text" class="form-account form-control" name="dob" value="<%= currentUser.dob %>">
+                                        <input type="date" class="form-account form-control" name="dob" value="<%= currentUser.dob %>">
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">Giới tính</label>
@@ -538,19 +538,30 @@
         <script>
 
         
-
-            // logout
             document.addEventListener('DOMContentLoaded', function () {
-                const logoutButton = document.getElementById('logoutButton');
-                logoutButton.addEventListener('click', function () {
-                    // Xóa cookie
-                    document.cookie = "Token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                    document.cookie = "Username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                    // Reload trang
-                    window.location.reload("/home");
+                const logoutButton = document.getElementById('logoutButton1');
+                logoutButton.addEventListener('click', async function () {
+                    try {
+                        const response = await fetch('/logout', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                            },
+                        });
+                        if (response.ok) {
+                            // Xóa token khỏi local storage
+                            localStorage.removeItem('accessToken');
+                            // Chuyển hướng người dùng về trang đăng nhập
+                            window.location.href = "/signin";
+                        } else {
+                            console.error('Error logging out');
+                        }
+                    } catch (error) {
+                        console.error('Error logging out:', error);
+                    }
                 });
             });
-
 
             $(document).ready(function () {
                 // Ẩn tất cả các tab trừ tab "Đơn đã đặt"

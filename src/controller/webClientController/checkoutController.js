@@ -1,6 +1,6 @@
+const { isArray } = require("util");
 const pool = require("../../models/connectDB");
 const moment = require('moment');
-const axios = require("axios");
 let postCheckout = async (req, res, next) => {
   try {
     const {
@@ -11,17 +11,17 @@ let postCheckout = async (req, res, next) => {
       cartItems,
       tongsoluong,
     } = req.body;
-
+    const arrayCartItems = cartItems
+    const { userID } = req.payload;
+  
+    
     let totalPriceDb = 0;
-    const [user, userFields] = await pool.execute(
-      "select * from user where Username = ? ",
-      [req.payload.userID.trim()]
-    );
+    const [user, userFields] = await pool.execute("select * from user where Username = ? ", [userID]);
 
     if (user.length > 0) {
-      if (cartItems) {
+      if (arrayCartItems) {
         Promise.all(
-          cartItems.map((item) => {
+          arrayCartItems.map((item) => {
             return new Promise(async (resolve, reject) => {
               try {
                 const [products, FieldProducts] = await pool.execute(
@@ -38,7 +38,11 @@ let postCheckout = async (req, res, next) => {
         )
           .then((list_product) => {
             if (parseFloat(totalPriceDb) === parseFloat(totalPrice)) {
-              req.user = user[0];
+              req.payload = {
+                info : req.body , 
+                infoUser : user[0]
+              }
+              
               next();
             } else {
               return res.status(403).json({
@@ -58,6 +62,7 @@ let postCheckout = async (req, res, next) => {
     }
   }
 };
+
 
 let getCheckout = (req, res) => {
   res.render("./Client/checkout.ejs");
@@ -79,7 +84,10 @@ let postCheckout2 = async (req, res , next) => {
       tongsoluong,
       paymentMethod,
     } = req.body;
-    const { Username, Email, Password, Check, id } = req.user;
+
+
+
+    const { Username, Email, Password, Check, id } = req.payload.infoUser;
 
     const [customer, customerFields] = await connection.execute(
       "SELECT * FROM customer WHERE Username = ?",
@@ -148,88 +156,78 @@ let postCheckout2 = async (req, res , next) => {
 
 let thanhtoanonline = async (req, res) => {
   try {
-
-
-
     process.env.TZ = 'Asia/Ho_Chi_Minh';
-    
+
     let date = new Date();
     let createDate = moment(date).format('YYYYMMDDHHmmss');
-    
+
     let ipAddr = req.headers['x-forwarded-for'] ||
         req.connection.remoteAddress ||
         req.socket.remoteAddress ||
         req.connection.socket.remoteAddress;
- 
-    const config = require("../../../config/default.json")
-    let tmnCode = config.vnp_TmnCode
-    let secretKey = config.vnp_HashSecret
-    let vnpUrl = config.vnp_Url
-    let returnUrl = config.vnp_ReturnUrl
-    
+
+    const config = require("../../../config/default.json");
+    let tmnCode = config.vnp_TmnCode;
+    let secretKey = config.vnp_HashSecret;
+    let vnpUrl = config.vnp_Url;
+    let returnUrl = config.vnp_ReturnUrl;
+
     let orderId = moment(date).format('DDHHmmss');
-    let amount = parseInt(totalPrice) * 100;
+    let amount = 1000; // Đảm bảo rằng đây là số tiền chính xác
     let bankCode = "VNPAYQR";
-    
-    let locale = req.body.language;
-    if(locale === null || locale === ''){
-        locale = 'vn';
-    }
+
+    let locale = req.body.language || 'vn';
     let currCode = 'VND';
-    let vnp_Params = {};
-    vnp_Params['vnp_Version'] = '2.1.0';
-    vnp_Params['vnp_Command'] = 'pay';
-    vnp_Params['vnp_TmnCode'] = tmnCode;
-    vnp_Params['vnp_Locale'] = locale;
-    vnp_Params['vnp_CurrCode'] = currCode;
-    vnp_Params['vnp_TxnRef'] = orderId;
-    vnp_Params['vnp_OrderInfo'] = 'Thanh toan cho ma GD:' + orderId;
-    vnp_Params['vnp_OrderType'] = 'other';
-    vnp_Params['vnp_Amount'] = amount ;
-    vnp_Params['vnp_ReturnUrl'] = returnUrl;
-    vnp_Params['vnp_IpAddr'] = ipAddr;
-    vnp_Params['vnp_CreateDate'] = createDate;
-    if(bankCode !== null && bankCode !== ''){
-        vnp_Params['vnp_BankCode'] = bankCode;
+    let vnp_Params = {
+      'vnp_Version': '2.1.0',
+      'vnp_Command': 'pay',
+      'vnp_TmnCode': tmnCode,
+      'vnp_Locale': locale,
+      'vnp_CurrCode': currCode,
+      'vnp_TxnRef': orderId,
+      'vnp_OrderInfo': 'Thanh toan cho ma GD:' + orderId,
+      'vnp_OrderType': 'other',
+      'vnp_Amount': amount * 100, // VNPAY expects the amount in cents
+      'vnp_ReturnUrl': returnUrl,
+      'vnp_IpAddr': ipAddr,
+      'vnp_CreateDate': createDate
+    };
+    if (bankCode) {
+      vnp_Params['vnp_BankCode'] = bankCode;
     }
 
     vnp_Params = sortObject(vnp_Params);
 
     let querystring = require('qs');
     let signData = querystring.stringify(vnp_Params, { encode: false });
-    let crypto = require("crypto");     
+    let crypto = require("crypto");
     let hmac = crypto.createHmac("sha512", secretKey);
-    let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex"); 
+    let signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
     vnp_Params['vnp_SecureHash'] = signed;
     vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
-    console.log("123")
-    res.redirect("http://localhost:8082/home")
-    
+
+    // Log the URL to verify
+    console.log(vnpUrl);
+
+    // Redirect to the VNPAY URL
+    res.redirect(vnpUrl);
+    return; // Đảm bảo rằng không có mã nào khác được thực thi sau khi chuyển hướng
+
   } catch (error) {
     console.error("Error during transaction:", error);
-    return res
-      .status(500)
-      .json({ message: "Đã xảy ra lỗi trong quá trình thanh toán" });
+    return res.status(500).json({ message: "Đã xảy ra lỗi trong quá trình thanh toán" });
   }
 };
 
-
-
 function sortObject(obj) {
-	let sorted = {};
-	let str = [];
-	let key;
-	for (key in obj){
-		if (obj.hasOwnProperty(key)) {
-		str.push(encodeURIComponent(key));
-		}
-	}
-	str.sort();
-    for (key = 0; key < str.length; key++) {
-        sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
-    }
-    return sorted;
+  let sorted = {};
+  let keys = Object.keys(obj).sort();
+  for (let key of keys) {
+    sorted[key] = obj[key];
+  }
+  return sorted;
 }
+
 
 
 

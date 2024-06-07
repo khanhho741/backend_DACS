@@ -18,7 +18,8 @@ let getAdminV1Invoices = async (req, res) => {
         // tong so trang
         let totalPage = Math.ceil(totalRow / limit);
       
-        
+        // get all staff
+        const [staff,staffField] = await pool.execute("select * from staff")
         
         //
         if (name) {
@@ -30,6 +31,7 @@ let getAdminV1Invoices = async (req, res) => {
             dataUser: rows ? rows : [],
             totalPage: totalPage,
             page: parseInt(_page),
+            totalStaff : staff
           });
         } else {
           const [rows, fields] = await pool.execute("SELECT * FROM `invoice` limit "+ start+"," +limit);
@@ -37,6 +39,7 @@ let getAdminV1Invoices = async (req, res) => {
             dataUser: rows ? rows : [],
             totalPage: totalPage,   
             page: parseInt(_page),
+            totalStaff : staff
           });
         }
     } catch (err) {
@@ -73,8 +76,40 @@ let exportToExcel = async (req, res) => {
     }
 }
 
+let upgrade_to_one_from_two = async (req, res) => {
+  const { idInvoice, idStaff } = req.body;
+  console.log(req.body)
+  const newStatus = 2; // Trạng thái mới
+
+  const connection = await pool.getConnection();
+
+  try {
+      await connection.beginTransaction();
+
+      // Cập nhật bảng invoice
+      await connection.execute("UPDATE `invoice` SET `Status` = ?, `IDStaff` = ? WHERE `IDInvoice` = ?",[newStatus, idStaff, idInvoice]);
+
+      // Cập nhật bảng deliverynotes
+      await connection.execute(
+        "UPDATE `deliverynotes` SET `Status` = ?, `IDStaff` = ? WHERE `IDInvoice` = ?",
+        [newStatus, idStaff, idInvoice]
+    );
+    
+      await connection.commit();
+      res.status(200).json({ message: 'Update successful' });
+
+  } catch (err) {
+      await connection.rollback();
+      console.error('Error executing transaction', err);
+      res.status(500).json({ message: 'Internal Server Error' });
+  } finally {
+      connection.release();
+  }
+}
 
 module.exports = {
     getAdminV1Invoices,
-    exportToExcel
+    exportToExcel , 
+    upgrade_to_one_from_two
+
 }

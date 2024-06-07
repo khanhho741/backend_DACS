@@ -9,7 +9,7 @@ const generateforgotpasswordToken = async (userID, role , secret) => {
         role,
       };
       const options = {
-        expiresIn: "2m",
+        expiresIn: "10m",
       };
       jwt.sign(payload, secret, options, (err, token) => {
         if (err) reject(err);

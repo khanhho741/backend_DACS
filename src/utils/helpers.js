@@ -96,6 +96,15 @@ const hashPassword = async (password) => {
 };
 
 
+const  encrypt = async (text, secretKey) => {
+    let cipher = crypto.createCipher('aes-256-cbc', secretKey);
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return encrypted;
+}
 
 
-module.exports = { validateRegistration , validateSignin , hashPassword , comparePassword , verifyCaptchaToken , generateRandomString} ;
+
+module.exports = { validateRegistration , validateSignin , 
+    hashPassword , comparePassword , verifyCaptchaToken ,
+     generateRandomString , encrypt} ;

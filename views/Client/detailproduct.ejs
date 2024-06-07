@@ -24,27 +24,20 @@
     <div class="container-fluid">
       <div class="row">
         <aside class="col-lg-6">
-          <div class="border rounded-4 mb-3 d-flex justify-content-center">
-            <a  class="product-image rounded-4"  data-type="image" href="#">
-              <img style="max-width: 100%; max-height: 60vh; margin: auto;" id="product-image" class="rounded-4 fit" src="./fe/images/2023_Alight2_Pink-1.jpg" />
+          <div class="border zoomer rounded-4 mb-3 d-flex justify-content-center">
+            <a  class="product-image image rounded-4"  data-type="image" href="#">
+                <img style="max-width: 100%; max-height: 60vh; margin: auto;" id="product-image" class="rounded-4 fit" src="<%= detailImage[0].UrlImages %>" />
             </a>
+            <div class="result hide"></div>
+
           </div>
+          
           <div class="d-flex justify-content-center mb-3">
-            <a  class="product-img-item border mx-2 rounded-2"  data-type="image" class="item-thumb">
-              <img width="170" height="160" class="rounded-2" src="./fe/images/pro2.png" onclick="changeImage(this)"  />
-            </a>
-            <a class="product-img-item border mx-2 rounded-2"  data-type="image" class="item-thumb">
-              <img width="170" height="160" class="rounded-2" src="./fe/images/pro3.png" onclick="changeImage(this)" />
-            </a>
-            <a  class="product-img-item border mx-2 rounded-2"  data-type="image"  class="item-thumb">
-              <img width="170" height="160" class="rounded-2" src="./fe/images/pro1.png" onclick="changeImage(this)"/>
-            </a>
-            <a class="product-img-item border mx-2 rounded-2"  data-type="image"  class="item-thumb">
-              <img width="170" height="160" class="rounded-2" src="./fe/images/pro7.png" onclick="changeImage(this)"/>
-            </a>
-            <a  class="product-img-item border mx-2 rounded-2" data-type="image" class="item-thumb">
-                <img width="170" height="160" class="rounded-2" src="./fe/images/pro6.png" onclick="changeImage(this)"  />
-            </a>
+            <% detailImage.forEach((thumb, i) => { %>
+                <a class="product-img-item border mx-2 rounded-2" data-type="image" class="item-thumb">
+                    <img width="170" height="160" class="rounded-2" src="<%= thumb.UrlImages %>" onclick="changeImage(this)" />
+                </a>
+            <% }); %>
           </div>
     
         </aside>
@@ -57,8 +50,17 @@
               <span class="text-muted"><i class="fa-solid fa-bicycle mx-1"></i>Còn 150 sản phẩm trong kho</span>
             </div>
   
-            <div class="mb-3">
-                <%= element.Price %>
+            <div class="mb-3 text-danger">
+                <% 
+                    function convertToVND(priceUSD) {
+                        const exchangeRate = 23000; 
+                        
+                        const priceVND = Math.round(priceUSD * exchangeRate * 100) / 100;
+                        
+                        return priceVND.toLocaleString('vi-VN'); 
+                    }
+                %>
+                <%= convertToVND(element.Price) %> ₫
             </div>
   
             <p>
@@ -83,13 +85,15 @@
               <dd class="col-9"><%= supplierInfo[0].SupplierName %></dd>
 
               <div class="col-3">
-                <dt>Color:</dt>
+                <dt>Evaluate:</dt>
             </div>
             <div class="col-9">
-                <div class="color-buttons">
-                    <button class="color-button" style="background-color: #ffffff; width: 25px; height: 25px; border-radius:50%; border: 1px solid #a4a4a4;"></button>
-                    <button class="color-button" style="background-color: #000000; width: 25px; height: 25px; border-radius:50%; border: 1px solid #a4a4a4;"></button>
-                    <button class="color-button" style="background-color: #0000f1; width: 25px; height: 25px; border-radius:50%; border: 1px solid #a4a4a4;"></button>
+                <div class="rating-buttons">
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
                 </div>
             </div>
             </div>
@@ -103,21 +107,21 @@
                 <label class="mb-2 d-block">Quantity</label>
                 <div class="input-group mb-3" style="width: 170px;">
                     <div class="d-flex" style="gap: 12px;">
-                        <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon1" data-mdb-ripple-color="dark">
+                        <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon1" data-mdb-ripple-color="dark" onclick="decreaseQuantity()">
                             <i class="fas fa-minus"></i>
-                          </button>
-                          <input type="text" class="form-control text-center border border-secondary" placeholder="1" aria-label="Example text with button addon" aria-describedby="button-addon1" style="width: 100px;" />
-                          <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon2" data-mdb-ripple-color="dark">
+                        </button>
+                        <input type="text" class="form-control text-center border border-secondary" id="quantity-input" value="1" aria-label="Quantity" style="width: 100px;" oninput="validateQuantityInput(this)">
+                        <button class="btn btn-white border border-secondary px-3" type="button" id="button-addon2" data-mdb-ripple-color="dark" onclick="increaseQuantity()">
                             <i class="fas fa-plus"></i>
-                          </button>
+                        </button>
                     </div>
                 </div>
               </div>
             </div>
             <div class="d-flex" style="gap: 15px;">
-                <a href="#" class="btn shadow-0" style="border-radius: 0; background-color: rgb(198, 14, 14); color: #fff"> Mua ngay online </a>
-                <a href="#" class="btn  shadow-0" style="border-radius: 0; background-color: rgb(198, 14, 14); color: #fff"> <i class="me-1 fa fa-shopping-basket"></i> Thêm vào giỏ hàng </a>
-                <a href="#" class="btn  shadow-0" style="border-radius: 0; background-color: rgb(198, 14, 14); color: #fff"> Liên hệ trao đổi </a>
+                <a href="/checkout" class="btn shadow-0" style="border-radius: 0; background-color: rgb(198, 14, 14); color: #fff" onclick="buyNow(<%= JSON.stringify(element) %>)"> Mua ngay online </a>
+                <a href="#" class="btn shadow-0" style="border-radius: 0; background-color: rgb(198, 14, 14); color: #fff"  onclick="updateProduct(<%= JSON.stringify(element) %>)"> <i class="me-1 fa fa-shopping-basket"></i> Thêm vào giỏ hàng </a>
+                <a href="/contact" class="btn shadow-0" style="border-radius: 0; background-color: rgb(198, 14, 14); color: #fff"> Liên hệ trao đổi </a>
             </div>
         
           </div>
@@ -137,18 +141,7 @@
             </button>
             <div class="product-detail-description-content">
                 <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Assumenda quam fugit voluptate ipsam itaque quisquam dolore quos nobis cum. 
-                    olestiae, libero aperiam. Error tempore dolores fuga obcaecati voluptatem beatae expedita.
-                    libero aperiam. Error tempore dolores fuga obcaecati voluptatem beatae expedita.
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Assumenda quam fugit voluptate ipsam itaque quisquam dolore quos nobis cum. 
-                    olestiae, libero aperiam. Error tempore dolores fuga obcaecati voluptatem beatae expedita.
-                    libero aperiam. Error tempore dolores fuga obcaecati voluptatem beatae expedita.
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Assumenda quam fugit voluptate ipsam itaque quisquam dolore quos nobis cum. 
-                    olestiae, libero aperiam. Error tempore dolores fuga obcaecati voluptatem beatae expedita.
-                    libero aperiam. Error tempore dolores fuga obcaecati voluptatem beatae expedita.
+                    <%= element.ProductDescription %> 
                 </p>
                 <div class="product-detail-img text-center">
                     <img src="./fe/images/2023_Alight2_Pink-1.jpg" alt="">
@@ -186,149 +179,36 @@
             Các sản phẩm khác
         </div>
         <div class="row" id="related-products">
+            <% randomProducts.forEach((product) => { %>
             <div class="col-lg-3 col-md-6 col-sm-12 mt-4">
                 <div class="box">
                     <div class="product-content">
-                        <a href=""><img src="${e.image1}" alt="" class="product-img"></a>
+                        <a href=""><img src="<%= product.UrlImages %>" alt="" class="product-img" style="height: 300px !important;"></a>
 
                         <div class="product-data">
                             <span class="product-band">Dung Chinh</span>
-                            <h2 class="product-title">${e.name}</h2>
-                            <p class="product-price">${e.curr_price}</p>
+                            <h2 class="product-title"><%= product.ProductName %></h2>
+                            <p class="product-price">
+                                <% 
+                                function convertToVND(priceUSD) {
+                                    const exchangeRate = 23000; 
+                                    
+                                    const priceVND = Math.round(priceUSD * exchangeRate * 100) / 100;
+                                    
+                                    return priceVND.toLocaleString('vi-VN'); 
+                                    }
+                                %>
+                                <%= convertToVND(product.Price) %> ₫</p>
                             <div class="productbtn-box d-flex">
-                              <a href="#" class="product-btn">Chi tiết</a>
-                              <a href="#" class="product-buy">Mua ngay</a>
+                              <a href="#" class="product-btn" onclick="redirectToDetailPage('<%= product.IDProduct %>')">Chi tiết</a>
+                              <a href="#" class="product-buy" onclick="updateProduct1(<%= JSON.stringify(product) %>)">Mua ngay</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="col-lg-3 col-md-6 col-sm-12 mt-4">
-                <div class="box">
-                    <div class="product-content">
-                        <a href=""><img src="${e.image1}" alt="" class="product-img"></a>
-
-                        <div class="product-data">
-                            <span class="product-band">Dung Chinh</span>
-                            <h2 class="product-title">${e.name}</h2>
-                            <p class="product-price">${e.curr_price}</p>
-                            <div class="productbtn-box d-flex">
-                              <a href="#" class="product-btn">Chi tiết</a>
-                              <a href="#" class="product-buy">Mua ngay</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 col-sm-12 mt-4">
-                <div class="box">
-                    <div class="product-content">
-                        <a href=""><img src="${e.image1}" alt="" class="product-img"></a>
-
-                        <div class="product-data">
-                            <span class="product-band">Dung Chinh</span>
-                            <h2 class="product-title">${e.name}</h2>
-                            <p class="product-price">${e.curr_price}</p>
-                            <div class="productbtn-box d-flex">
-                              <a href="#" class="product-btn">Chi tiết</a>
-                              <a href="#" class="product-buy">Mua ngay</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 col-sm-12 mt-4">
-                <div class="box">
-                    <div class="product-content">
-                        <a href=""><img src="${e.image1}" alt="" class="product-img"></a>
-
-                        <div class="product-data">
-                            <span class="product-band">Dung Chinh</span>
-                            <h2 class="product-title">${e.name}</h2>
-                            <p class="product-price">${e.curr_price}</p>
-                            <div class="productbtn-box d-flex">
-                              <a href="#" class="product-btn">Chi tiết</a>
-                              <a href="#" class="product-buy">Mua ngay</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 col-sm-12 mt-4">
-                <div class="box">
-                    <div class="product-content">
-                        <a href=""><img src="${e.image1}" alt="" class="product-img"></a>
-
-                        <div class="product-data">
-                            <span class="product-band">Dung Chinh</span>
-                            <h2 class="product-title">${e.name}</h2>
-                            <p class="product-price">${e.curr_price}</p>
-                            <div class="productbtn-box d-flex">
-                              <a href="#" class="product-btn">Chi tiết</a>
-                              <a href="#" class="product-buy">Mua ngay</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 col-sm-12 mt-4">
-                <div class="box">
-                    <div class="product-content">
-                        <a href=""><img src="${e.image1}" alt="" class="product-img"></a>
-
-                        <div class="product-data">
-                            <span class="product-band">Dung Chinh</span>
-                            <h2 class="product-title">${e.name}</h2>
-                            <p class="product-price">${e.curr_price}</p>
-                            <div class="productbtn-box d-flex">
-                              <a href="#" class="product-btn">Chi tiết</a>
-                              <a href="#" class="product-buy">Mua ngay</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 col-sm-12 mt-4">
-                <div class="box">
-                    <div class="product-content">
-                        <a href=""><img src="${e.image1}" alt="" class="product-img"></a>
-
-                        <div class="product-data">
-                            <span class="product-band">Dung Chinh</span>
-                            <h2 class="product-title">${e.name}</h2>
-                            <p class="product-price">${e.curr_price}</p>
-                            <div class="productbtn-box d-flex">
-                              <a href="#" class="product-btn">Chi tiết</a>
-                              <a href="#" class="product-buy">Mua ngay</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 col-sm-12 mt-4">
-                <div class="box">
-                    <div class="product-content">
-                        <a href=""><img src="${e.image1}" alt="" class="product-img"></a>
-
-                        <div class="product-data">
-                            <span class="product-band">Dung Chinh</span>
-                            <h2 class="product-title">${e.name}</h2>
-                            <p class="product-price">${e.curr_price}</p>
-                            <div class="productbtn-box d-flex">
-                              <a href="#" class="product-btn">Chi tiết</a>
-                              <a href="#" class="product-buy">Mua ngay</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <% }) %>
+            
         </div>
     </div>
   </section>
@@ -345,5 +225,111 @@
         var tempSrc = mainImage.src;
         mainImage.src = img.src;
         img.src = tempSrc;
+    }
+    function increaseQuantity() {
+        let quantityInput = document.getElementById('quantity-input');
+        let currentQuantity = parseInt(quantityInput.value);
+        quantityInput.value = currentQuantity + 1;
+    }
+
+    function decreaseQuantity() {
+        let quantityInput = document.getElementById('quantity-input');
+        let currentQuantity = parseInt(quantityInput.value);
+        if (currentQuantity > 1) {
+            quantityInput.value = currentQuantity - 1;
+        }
+    }
+
+    function getQuantity() {
+        return document.getElementById('quantity-input').value;
+    }
+
+    function updateProduct(element) {
+        const productInfo = {
+            IDProduct: element.IDProduct,
+            Price: element.Price,
+            ProductName: element.ProductName,
+            Sale: element.Sale,
+            SupplierName: '<%= supplierInfo[0].SupplierName %>', // Truy cập trực tiếp từ EJS template
+            url: '<%= detailImage[0].UrlImages %>', // Truy cập trực tiếp từ EJS template
+        };
+    
+        let gioHang = JSON.parse(localStorage.getItem("giohang")) || [];
+    
+        const existingProductIndex = gioHang.findIndex(item => item.IDProduct === productInfo.IDProduct);
+    
+        const quantity = parseInt(getQuantity()); // Lấy số lượng từ input và chuyển thành kiểu số nguyên
+    
+        if (existingProductIndex !== -1) {
+            gioHang[existingProductIndex].soluong += quantity; // Thêm số lượng mới vào số lượng hiện có
+        } else {
+            productInfo.soluong = quantity; // Số lượng mới là số lượng hiện tại
+            gioHang.push(productInfo);
+        }
+    
+        localStorage.setItem("giohang", JSON.stringify(gioHang));
+        changeNumberCart();
+    }
+
+    
+    function validateQuantityInput(input) {
+        let value = parseInt(input.value);
+        if (isNaN(value) || value < 1) {
+            input.value = 1;
+        }
+    }
+    function buyNow(element) {
+        const productInfo = {
+            IDProduct: element.IDProduct,
+            Price: element.Price,
+            ProductName: element.ProductName,
+            Sale: element.Sale,
+            SupplierName: '<%= supplierInfo[0].SupplierName %>', // Truy cập trực tiếp từ EJS template
+            url: '<%= detailImage[0].UrlImages %>', // Truy cập trực tiếp từ EJS template
+        };
+    
+        let gioHang = JSON.parse(localStorage.getItem("giohang")) || [];
+    
+        const existingProductIndex = gioHang.findIndex(item => item.IDProduct === productInfo.IDProduct);
+    
+        const quantity = parseInt(getQuantity()); // Lấy số lượng từ input và chuyển thành kiểu số nguyên
+    
+        if (existingProductIndex !== -1) {
+            gioHang[existingProductIndex].soluong += quantity; // Thêm số lượng mới vào số lượng hiện có
+        } else {
+            productInfo.soluong = quantity; // Số lượng mới là số lượng hiện tại
+            gioHang.push(productInfo);
+        }
+    
+        localStorage.setItem("giohang", JSON.stringify(gioHang));
+        changeNumberCart();
+
+    }
+    function redirectToDetailPage(productId) {
+        window.location.href = "/detailproduct/" + productId;
+    }
+    function updateProduct1(product) {
+        const productInfo = {
+            IDProduct: product.IDProduct,
+            Price: product.Price,
+            ProductName: product.ProductName,
+            Sale: product.Sale,
+            SupplierName: product.SupplierName, // Truy cập trực tiếp từ EJS template
+            url: product.UrlImages, // Truy cập trực tiếp từ EJS template
+        };
+    
+        let gioHang = JSON.parse(localStorage.getItem("giohang")) || [];
+    
+        const existingProductIndex = gioHang.findIndex(item => item.IDProduct === productInfo.IDProduct);
+    
+        if (existingProductIndex !== -1) {
+            gioHang[existingProductIndex].soluong = (gioHang[existingProductIndex].soluong || 1) + 1; // Thêm số lượng mới vào số lượng hiện có
+        } else {
+            productInfo.soluong = 1; // Số lượng mới là số lượng hiện tại
+            gioHang.push(productInfo);
+        }
+    
+        localStorage.setItem("giohang", JSON.stringify(gioHang));
+        changeNumberCart();
     }
 </script>

@@ -45,6 +45,56 @@ let getAdminV1Staff = async (req, res) => {
     }
 }
 
+let getAdminV1StaffEdit = async (req, res) => {
+  const itemId = req.params.id;
+  try {
+      const [rows] = await pool.execute(
+          "SELECT * FROM `staff` WHERE IDStaff = ?",
+          [itemId]
+      );
+
+      if (rows.length > 0) {
+          res.render("./Admin/accounts/staffEdit.ejs", {
+              row: rows[0]
+          });
+      } else {
+          res.status(404).json({ message: "Staff member not found." });
+      }
+  } catch (err) {
+      console.error('Error fetching staff data', err);
+      res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+let postAdminV1StaffEdit = async (req, res) => {
+  const itemId = req.params.id;
+  const { IDStaffType } = req.body;
+
+  try {
+      if (!IDStaffType || !itemId) {
+          return res.status(400).json({ message: "Invalid input data." });
+      }
+
+      const [rows] = await pool.execute(
+          "SELECT * FROM `staff` WHERE IDStaff = ?",
+          [itemId]
+      );
+
+      if (rows.length === 0) {
+          return res.status(404).json({ message: "Staff member not found." });
+      }
+
+      await pool.execute(
+          "UPDATE `staff` SET IDStaffType = ? WHERE IDStaff = ?",
+          [IDStaffType, itemId]
+      );
+
+      res.status(200).json({ message: "Staff member updated successfully." });
+  } catch (err) {
+      console.error('Error updating staff data', err);
+      res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
 let exportToExcel = async (req, res) => {
     try {
         const [rows, fields] = await pool.execute("SELECT * FROM `staff`");
@@ -129,6 +179,8 @@ let getAdminV1StafftypeEdit = async (req,res) =>{
         row: rows,
     })
 }
+
+
 
 let postAdminV1StafftypeCreate = async (req, res) => {
   try {
@@ -255,7 +307,15 @@ let postAdminV1StafftypeDelete = async (req, res) => {
   }
 };
 
-
+let getAdminV1StaffTypes = async (req, res) => {
+  try {
+      const [rows] = await pool.execute("SELECT IDStaffType as id, StaffTypeName as name FROM stafftype");
+      res.json(rows);
+  } catch (err) {
+      console.error('Error fetching staff types', err);
+      res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 module.exports = {
     getAdminV1Staff,
     exportToExcel,
@@ -265,5 +325,7 @@ module.exports = {
     postAdminV1StafftypeCreate,
     postAdminV1StafftypeEdit,
     postAdminV1StafftypeDelete,
-
+    getAdminV1StaffEdit,
+    postAdminV1StaffEdit,
+    getAdminV1StaffTypes
 }

@@ -19,7 +19,9 @@
                     </table>
                     <div class="infor-checkout d-flex justify-content-between">
                         <h3>Thông tin nhận hàng</h3>
-                        <form action="" class="form-infor">
+
+                        <form action="http://localhost:8888/api/vnpay/create_payment_url" method="post"
+                            class="form-infor">
                             <div class="infor-content mb-2">
                                 <label for="fname" class="form-label">Tên khách hàng</label>
                                 <input class="form-control" type="text" id="fname" name="firstname" placeholder="">
@@ -35,20 +37,25 @@
                                 <textarea class="form-control" rows="4" id="adr" name="address"></textarea>
                             </div>
 
+                            <!-- Các trường input ẩn để chứa dữ liệu từ formData -->
+                            <input type="hidden" name="totalPrice" id="totalPrice">
+                            <input type="hidden" name="tongsoluong" id="tongsoluong">
+                            <input type="hidden" name="cartItems" id="cartItems">
+                            <input type="hidden" name="paymentMethod" id="paymentMethod">
+
+
+                            <button type="submit" id="clickmenow" style="display: none;">Thanh toán trực tuyến</button>
+
+
                         </form>
                     </div>
                     <div class="d-flex justify-content-between mt-4">
                         <h3>Phương thức thanh toán</h3>
                         <div class="checkout-cate d-flex">
-                            <button class="btn-checkout online-payment-btn">Thanh toán trực tuyến</button>
+                            <button class="btn-checkout online-payment-btn ">Thanh toán trực tuyến</button>
                             <button class="btn-checkout cash-on-delivery-btn">Thanh toán khi nhận hàng</button>
                         </div>
-                        
                     </div>
-                    <form action="http://localhost:8082/api/vnpay/create_payment_url" class="paymentonline" method="post" style="display: none; float:right;">
-                        <img src="/congkhai/pageClient/fe/images/payment_3_img.webp" alt="" id="imageSubmit" style="cursor: pointer;">
-                        <button type="submit" id="submitBtn" style="display: none;"></button>
-                    </form>
                     <div class="checkout d-flex justify-content-end mt-5">
                         <div class="checkout-item d-flex justify-content-end">
                             <h5>Phí vận chuyển:</h5>
@@ -60,11 +67,11 @@
                         </div>
                         <div class="checkout-item d-flex justify-content-end">
                             <h5>Tổng tiền hàng:</h5>
-                            <h5>0 USD</h5>
+                            <h5>0 VND</h5>
                         </div>
-                        <div class="checkout-item sum-checkout d-flex align-items-center justify-content-end">
+                        <div class="checkout-item d-flex align-items-center justify-content-end">
                             <h5>Tổng thanh toán:</h5>
-                            <h4 style="color: red;">0 USD</h4>
+                            <h4 style="color: red;">0 VND</h4>
                         </div>
                     </div>
 
@@ -72,8 +79,10 @@
             </div>
             <div class="row mt-4 d-flex align-items-center">
                 <div class="col-sm-6 order-md-2 text-right">
-                    <a href="#" id="btn-dathang" class="btn-right btn btn-danger mb-4 btn-lg pl-5 pr-5">Đặt Hàng</a>
+                    <a href="/create_payment_url" id="btn-dathang"
+                        class="btn-right btn btn-danger mb-4 btn-lg pl-5 pr-5">Đặt Hàng</a>
                 </div>
+
                 <div class="col-sm-6 mb-3 mb-m-1 order-md-1 text-md-left">
                     <a href="/cart">
                         <i class="fas fa-arrow-left mr-2"></i> Trở lại</a>
@@ -81,144 +90,157 @@
             </div>
         </div>
     </section>
-    
-  
+
+ 
+
+
+
+
     <%- include('../Client/layout/footer.ejs') %>
 
-    <script>
-        document.querySelector(".online-payment-btn").addEventListener("click", function () {
-            // Hiển thị form khi nút được click
-        });
-    
-        document.addEventListener("DOMContentLoaded", function () {
-            // Utility function to convert USD to VND and format it
-            function formatPriceToVND(priceUSD) {
-                const conversionRate = 23000; // Conversion rate from USD to VND
-                const priceVND = priceUSD * conversionRate;
-                return priceVND.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-            }
-    
-            // Kiểm tra xem có dữ liệu trong localStorage không
-            if (localStorage.getItem("giohang")) {
-                // Lấy dữ liệu từ localStorage và chuyển đổi thành mảng JavaScript
-                var cartItems = JSON.parse(localStorage.getItem("giohang"));
-    
-                // Lặp qua từng mục trong mảng dữ liệu và thêm chúng vào bảng shoppingCart
-                var shoppingCart = document.querySelector("#shoppingCart tbody");
-    
-                // Xóa bỏ bất kỳ hàng nào đã tồn tại trong bảng
-                shoppingCart.innerHTML = '';
-    
-                // Lặp qua mỗi mục trong mảng cartItems
-                cartItems.forEach(function (item) {
-                    // Tạo một hàng mới trong bảng
-                    var newRow = document.createElement("tr");
-    
-                    // Thiết lập nội dung của hàng mới
-                    newRow.innerHTML = `
-                        <td data-th="Product">
-                            <div class="row">
-                                <div class="col-md-3 text-left">
-                                    <img src="${item.url}" alt="" class="img-fluid d-none d-md-block rounded mb-2 shadow ">
-                                </div>
-                                <div class="col-md-9 text-left mt-sm-2">
-                                    <h4>${item.ProductName}</h4>
-                                    <p class="font-weight-light">${item.SupplierName}</p>
-                                </div>
+        <script>
+
+
+
+            document.addEventListener("DOMContentLoaded", function () {
+
+                // Kiểm tra xem có dữ liệu trong localStorage không
+                if (localStorage.getItem("giohang")) {
+                    // Lấy dữ liệu từ localStorage và chuyển đổi thành mảng JavaScript
+                    var cartItems = JSON.parse(localStorage.getItem("giohang"));
+
+                    // Lặp qua từng mục trong mảng dữ liệu và thêm chúng vào bảng shoppingCart
+                    var shoppingCart = document.querySelector("#shoppingCart tbody");
+
+                    // Xóa bỏ bất kỳ hàng nào đã tồn tại trong bảng
+                    shoppingCart.innerHTML = '';
+
+                    // Lặp qua mỗi mục trong mảng cartItems
+                    cartItems.forEach(function (item) {
+                        // Tạo một hàng mới trong bảng
+                        var newRow = document.createElement("tr");
+
+                        // Thiết lập nội dung của hàng mới
+                        newRow.innerHTML = `
+                    <td data-th="Product">
+                        <div class="row">
+                            <div class="col-md-3 text-left">
+                                <img src="${item.url}" alt="" class="img-fluid d-none d-md-block rounded mb-2 shadow ">
                             </div>
-                        </td>
-                        <td data-th="Price">${formatPriceToVND(item.Price)}</td>
-                        <td data-th="Quantity">
-                            <div class="text-center">${item.soluong}</div>
-                        </td>
-                        <td class="actions" data-th="">
-                            <div class="text-right">${formatPriceToVND(item.Price * item.soluong)}</div>
-                        </td>
-                    `;
-    
-                    // Thêm hàng mới vào bảng
-                    shoppingCart.appendChild(newRow);
-                });
-    
-                // Tính toán các giá trị cần thiết từ dữ liệu trong localStorage
-                var tongSoLuong = cartItems.reduce(function (total, item) {
-                    return total + parseInt(item.soluong);
-                }, 0);
-    
-                var tongTienHang = cartItems.reduce(function (total, item) {
-                    return total + parseInt(item.Price) * parseInt(item.soluong);
-                }, 0);
-    
-                // Cập nhật các giá trị này vào giao diện
-                document.querySelector(".checkout-item:nth-child(2) h5:last-child").textContent = tongSoLuong;
-                document.querySelector(".checkout-item:nth-child(3) h5:last-child").textContent = formatPriceToVND(tongTienHang);
-                document.querySelector(".checkout-item:nth-child(4) h4:last-child").textContent = formatPriceToVND(tongTienHang);
-            }
-    
-            document.querySelectorAll(".btn-checkout").forEach(element => {
-                element.addEventListener("click", e => {
-                    // Lấy tất cả các nút "btn-checkout"
-                    const allButtons = document.querySelectorAll(".btn-checkout");
-    
-                    // Lặp qua tất cả các nút và loại bỏ lớp "active" nếu có
-                    allButtons.forEach(button => {
-                        button.classList.remove("active");
+                            <div class="col-md-9 text-left mt-sm-2">
+                                <h4>${item.ProductName}</h4>
+                                <p class="font-weight-light">${item.SupplierName}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td data-th="Price">${item.Price} VND</td>
+                    <td data-th="Quantity">
+                        <div class="text-center">${item.soluong}</div>
+                    </td>
+                    <td class="actions" data-th="">
+                        <div class="text-right">${item.Price * item.soluong} VND</div>
+                    </td>
+                `;
+
+                        // Thêm hàng mới vào bảng
+                        shoppingCart.appendChild(newRow);
                     });
-    
-                    // Thêm lớp "active" cho nút được click
-                    e.target.classList.add("active");
+                }
+
+
+                if (localStorage.getItem("giohang")) {
+                    // Lấy dữ liệu từ localStorage và chuyển đổi thành mảng JavaScript
+                    var cartItems = JSON.parse(localStorage.getItem("giohang"));
+
+                    // Tính toán các giá trị cần thiết từ dữ liệu trong localStorage
+                    var tongSoLuong = cartItems.reduce(function (total, item) {
+                        return total + parseInt(item.soluong);
+                    }, 0);
+
+                    var tongTienHang = cartItems.reduce(function (total, item) {
+                        return total + parseInt(item.Price) * parseInt(item.soluong);
+                    }, 0);
+
+                    // Cập nhật các giá trị này vào giao diện
+                    document.querySelector(".checkout-item:nth-child(2) h5:last-child").textContent = tongSoLuong;
+                    document.querySelector(".checkout-item:nth-child(3) h5:last-child").textContent = tongTienHang.toLocaleString("vi-VN") + " VND";
+                    document.querySelector(".checkout-item:nth-child(4) h4:last-child").textContent = tongTienHang.toLocaleString("vi-VN") + " VND";
+                }
+
+
+
+
+                document.querySelectorAll(".btn-checkout").forEach(element => {
+                    element.addEventListener("click", e => {
+                        // Lấy tất cả các nút "btn-checkout"
+                        const allButtons = document.querySelectorAll(".btn-checkout");
+
+                        // Lặp qua tất cả các nút và loại bỏ lớp "active" nếu có
+                        allButtons.forEach(button => {
+                            button.classList.remove("active");
+                        });
+
+                        // Thêm lớp "active" cho nút được click
+                        e.target.classList.add("active");
+                    });
                 });
-            });
-    
-            let paymentMethod = null;
-    
-            document.querySelector(".online-payment-btn").addEventListener("click", function () {
-                paymentMethod = "online"; // Gán giá trị là "online"
-                document.querySelector(".paymentonline").style.display = "block";
-            });
-    
-            document.querySelector(".cash-on-delivery-btn").addEventListener("click", function () {
-                paymentMethod = "cash"; // Gán giá trị là "cash"
-                document.querySelector(".paymentonline").style.display = "none";
-            });
-    
-            // Bắt sự kiện khi click vào nút "Đặt Hàng"
-            document.querySelector("#btn-dathang").addEventListener("click", async function (e) {
-                e.preventDefault(); // Ngăn chặn hành vi mặc định của nút submit
-    
-                try {
+
+
+
+
+                let paymentMethod = null;
+
+                document.querySelector(".online-payment-btn").addEventListener("click", function () {
+                    paymentMethod = "online"; // Gán giá trị là "online"
+                });
+
+                document.querySelector(".cash-on-delivery-btn").addEventListener("click", function () {
+                    paymentMethod = "cash"; // Gán giá trị là "cash"
+
+                });
+
+
+
+                // Bắt sự kiện khi click vào nút "Đặt Hàng"
+                document.querySelector("#btn-dathang").addEventListener("click", async function (e) {
+
+
+                    e.preventDefault(); // Ngăn chặn hành vi mặc định của nút submit
+
+
+
                     // Lấy giá trị của các trường dữ liệu từ form
                     const tenKhachHang = document.querySelector("#fname").value;
                     const soDienThoai = document.querySelector("#email").value;
                     const diaChi = document.querySelector("#adr").value;
-    
+
                     // Kiểm tra dữ liệu nhập vào
                     if (!tenKhachHang || !soDienThoai || !diaChi) {
                         alert("Vui lòng điền đầy đủ thông tin.");
                         return;
                     }
-    
+
                     const isToken = document.cookie.includes("Token") ? "co" : "ko";
                     if (isToken === "ko") {
                         alert("bạn phải đăng nhập");
                         return;
                     }
-    
+
                     var usernameCookie = document.cookie.match(/(^|;) ?Token=([^;]*)(;|$)/)[2];
                     if (!usernameCookie) {
                         alert("Token không hợp lệ");
                         return;
                     }
-    
+
                     // Lấy danh sách sản phẩm từ localStorage
                     const cartItems = JSON.parse(localStorage.getItem("giohang"));
-                    let totalPrice = 0;
-                    let tongsoluong = 0;
+                    let totalPrice = 0
+                    let tongsoluong = 0
                     cartItems.forEach(item => {
-                        totalPrice += parseInt(item.soluong) * parseInt(item.Price);
-                        tongsoluong += parseInt(item.soluong);
-                    });
-    
+                        totalPrice += parseInt(item.soluong) * parseInt(item.Price)
+                        tongsoluong += parseInt(item.soluong)
+                    })
+
                     // Tạo đối tượng formData chứa thông tin đơn hàng
                     const formData = {
                         tenKhachHang: tenKhachHang,
@@ -229,52 +251,79 @@
                         cartItems: cartItems,
                         paymentMethod: paymentMethod
                     };
-    
-                    const response = await fetch("http://localhost:8082/checkout", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(formData),
-                    });
-                    const responseData = await response.json();
-                    console.log(response);
-                    if (response.status === 200) {
-                        alert(responseData.message);
-                        if (localStorage.clearLocalStorage) {
-                            localStorage.clear();
+
+                    // insert into form submit create url checkout
+                    document.querySelector("#paymentMethod").value = formData.paymentMethod
+                    document.querySelector("#totalPrice").value = formData.totalPrice
+                    document.querySelector("#tongsoluong").value = formData.tongsoluong
+                    document.querySelector("#cartItems").value = JSON.stringify( formData.cartItems)
+                  
+
+
+                    if (paymentMethod === "cash") {
+
+                        try {
+
+
+
+                            const response = await fetch("/checkout", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(formData),
+                            });
+                            const responseData = await response.json()
+                            console.log(response)
+                            if (response.status === 200) {
+                                alert(responseData.message);
+                                if (localStorage.clearLocalStorage) {
+                                    localStorage.clear();
+                                }
+                                window.location.href = "/shop"
+                            } else if (response.status === 400) {
+                                alert(responseData.message);
+                            } else if (response.status === 410) {
+                                alert(responseData.message);
+                            } else if (response.status = 403) {
+                                alert(responseData.message);
+                            }
+                            else if (response.status === 422) {
+                                alert(responseData.message);
+                            } else if (response.status === 421) {
+                                if (responseData.message) {
+                                    alert("rỗng link")
+                                } else {
+
+                                }
+
+                            }
+                            else if (response.status === 409) {
+                                alert(responseData.message);
+                                window.location.href = "/signin"
+                            }
+                            else if (response.status === 500) {
+                                alert(responseData.message);
+                            }
+                        } catch (error) {
+                            console.log(error)
+                            alert(error);
                         }
-                        window.location.href = "https://dungchinh.onrender.com/shop";
-                    } else if (response.status === 400) {
-                        alert(responseData.message);
-                    } else if (response.status === 410) {
-                        alert(responseData.message);
-                    } else if (response.status === 403) {
-                        alert(responseData.message);
-                    } else if (response.status === 422) {
-                        alert(responseData.message);
-                    } else if (response.status === 421) {
-                        if (responseData.message) {
-                            alert("rỗng link");
-                        } else {
-    
+                    } else if (paymentMethod === "online") {
+                        // Luồng xử lý thanh toán trực tuyến
+                        const confirmation = confirm("Bạn có chắc chắn muốn thanh toán trực tuyến?");
+                        if (confirmation === true) {
+                            document.getElementById("clickmenow").click();
                         }
-    
-                    } else if (response.status === 409) {
-                        alert(responseData.message);
-                        window.location.href = "https://dungchinh.onrender.com/signin";
-                    } else if (response.status === 500) {
-                        alert(responseData.message);
+                        return;
                     }
-                } catch (error) {
-                    console.log(error);
-                    alert(error);
-                }
+
+                });
+
+
+
+
             });
-    
-        });
-    
-        document.getElementById("imageSubmit").addEventListener("click", function() {
-            document.getElementById("submitBtn").click();
-        });
-    </script>
+
+
+        </script>

@@ -93,7 +93,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-12 col-xs-12">
-                                                <button class="button dark cta-submitform">Gửi cho chúng tôi</button>
+                                                <button  id="sendEmailButton" class="button dark cta-submitform">Gửi cho chúng tôi</button>
                                             </div>
                                         </div>
                                     </div>
@@ -116,5 +116,33 @@
         </div>
     </section>
 
-
+    <script>
+        document.getElementById('sendEmailButton').addEventListener('click', async function() {
+            const name = document.querySelector('input[name="contact[name]"]').value;
+            const email = document.querySelector('input[name="contact[email]"]').value;
+            const phone = document.querySelector('input[name="contact[phone]"]').value;
+            const body = document.querySelector('textarea[name="contact[body]"]').value;
+        
+            try {
+                const response = await fetch('/sendmail', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, phone, body })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Email đã được gửi thành công!');
+                } else {
+                    alert('Có lỗi xảy ra khi gửi email. Vui lòng thử lại sau!');
+                }
+            } catch (error) {
+                console.error('Error sending email:', error);
+                alert('Có lỗi xảy ra khi gửi email. Vui lòng thử lại sau!');
+            }
+        });
+    </script>
     <%- include('../Client/layout/footer.ejs') %>

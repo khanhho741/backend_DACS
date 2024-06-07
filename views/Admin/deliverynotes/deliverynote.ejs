@@ -1,0 +1,118 @@
+<%- include('../layout/header.ejs') %>
+<%- include('../layout/aside.ejs') %>
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <h1>Quản lý phiếu giao hàng</h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="#">Examples</a></li>
+            <li class="active">Blank page</li>
+        </ol>
+    </section>
+
+    <section class="content">
+        <div class="box">
+            <div class="box-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">IdDeliveryNotes</th>
+                            <th scope="col">IDInvoice</th>
+                            <th scope="col">DateCreated</th>
+                            <th scope="col">DeliveryAddress</th>
+                            <th scope="col">RecipientPhone</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">IDStaff</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% dataDelivery.map((item, index) => { %>
+                        <tr>
+                            <td><%= item.IdDeliveryNotes %></td>
+                            <td><%= item.IDInvoice %></td>
+                            <td><%= item.DateCreated %></td>
+                            <td><%= item.DeliveryAddress %></td>
+                            <td><%= item.RecipientPhone %></td>
+                            <td><%= item.Status %></td>
+                            <td><%= item.IDStaff %></td>
+                            <td>
+                                <% if(item.Status === 1) { %>
+                                <button class="btn btn-warning " data-id="<%= item.IdDeliveryNotes %>" data-invoice="<%= item.IDInvoice %>" data-status="2">
+                                    Chờ xác nhận
+                                </button>
+                                <% } else if(item.Status === 2) { %>
+                                <button class="btn btn-info btn-status" data-id="<%= item.IdDeliveryNotes %>" data-invoice="<%= item.IDInvoice %>" data-status="3">
+                                    Giao thành công
+                                </button>
+                                <% } %>
+
+
+                                <% if(item.Status === 3 ) { %>
+
+                                <button class="btn btn-success " >
+                                    Đã Giao hàng thành công
+                                </button>
+                                <% } %>
+
+
+                                
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="box-footer">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item"><a class="page-link" href="?page=<%= page <= 1 ? 1 : page - 1 %>">Previous</a></li>
+                        <% for(let i = 1; i <= totalPage; i++) { %>
+                        <li class="page-item <%= page == i ? 'active' : '' %>"><a class="page-link" href="?page=<%= i %>"><%= i %></a></li>
+                        <% } %>
+                        <li class="page-item"><a class="page-link" href="?page=<%= page >= totalPage ? totalPage : page + 1 %>">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).on('click', '.btn-status', function () {
+        const idDeliveryNotes = $(this).data('id');
+        const idInvoice = $(this).data('invoice');
+        const status = $(this).data('status');
+
+        const result = confirm("xác nhận đơn hàng giao thành công?");
+        if (result) {
+            $.ajax({
+                url: '/admin/v1/deliverynotes/edit/'+idDeliveryNotes,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ 
+                    idDeliveryNotes: idDeliveryNotes, 
+                    idInvoice: idInvoice, 
+                    status: status 
+                }),
+                success: function (response) {
+                    if (response.message === 'Update successful') {
+                        alert("Cập nhật thành công");
+                        location.reload();
+                    } else {
+                        alert("Đã có lỗi xảy ra");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("There was a problem with your AJAX operation:", error);
+                    alert("Đã có lỗi xảy ra");
+                }
+            });
+        }
+    });
+</script>
+
+<%- include('../layout/footer.ejs') %>

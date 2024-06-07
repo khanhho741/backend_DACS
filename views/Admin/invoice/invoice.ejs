@@ -60,26 +60,65 @@
                   </td>
 
                   <td>
-                    <%= item.IDStaff%>
-                  </td>
+                    <% if(item.IDStaff === null){ %>
+                        <select class="select-staff">
+                            <% totalStaff.map((staff, index) => { %>
+                                <option value="<%= staff.IDStaff %>">
+                                    <%= staff.IDStaff %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    <% } else { %>
+                        <%= item.IDStaff %>
+                    <% } %>
+                </td>
+                
 
                   <td>
                     <%= item.DateCreated%>
                   </td>
 
                   <td>
+               
                     <%= item.Status%>
                   </td>
 
 
                   <td>
-                    <a href="#" class="btn btn-sm btn-warning btn-xem" aboriginal="<%= item.Username %>">
-                        <i class="fa-solid fa-check" style="margin: 5px;"></i> Xác Nhận
+                    <% if(item.Status === 0 ) { %>
+                      <a href="#" class="btn btn-sm btn-danger btn-xem" aboriginal="<%= item.Username %>">
+                  
+                        <i class="fa-solid fa-xmark" style="margin: 5px;"></i> đã hủy
                     </a>
+                    
+                    <%}%>
+
+                    <% if(item.Status === 1 ) { %>
+                      <a href="#" class="btn btn-sm btn-warning btn-xem" aboriginal="<%= item.Username %>">
+                  
+                        <i class="fa-solid fa-repeat" style="margin: 5px;"></i> Xác Nhận
+                    </a>
+                    <%}%>
+
+                    <% if(item.Status === 2 ) { %>
+                      <a href="#" class="btn btn-sm btn-info btn-xem" aria-readonly="true" aboriginal="<%= item.Username %>">
+                        <i class="fa-solid fa-check" style="margin: 5px;"></i> đã Xác Nhận
+                    </a>
+                    <%}%>
+
+
+                    <% if(item.Status === 3 ) { %>
+                      <a href="#" class="btn btn-sm btn-success btn-xem" aria-readonly="true" aboriginal="<%= item.Username %>">
+                        <i class="fa-solid fa-check" style="margin: 5px;"></i> Đã Giao hàng thành công
+                    </a>
+                    <%}%>
+                
+                
                      
                     <a href="#" class="btn btn-sm btn-primary btn-xem" aboriginal="<%= item.Username %>">
                         <i class="fa fa-eye" style="margin: 5px;"></i> Chi tiết hóa đơn
                     </a>
+
                   </td>
                   </tr>
                   <% }) %>
@@ -122,7 +161,7 @@
       $('.btn-xem').click(function () {
         var username = $(this).attr('aboriginal');
         $.ajax({
-            url: 'http://localhost:8082/admin/v1/customer/' + username,
+            url: '/admin/v1/customer/' + username,
             type: 'GET',
             success: function (data) {
                 $('#customerDetails').html(data);
@@ -135,8 +174,68 @@
     });
 
     function exportExcel() {
-      window.location.href = 'http://localhost:8082/admin/v1/exportToExcel/';
+      window.location.href = '/admin/v1/exportToExcel/';
   }
+
+
+  $('.btn-warning').click(function () {
+
+    const result = confirm("chẵc chẵn xác nhận")
+    if(result === true){
+      var row = $(this).closest('tr');
+    var idInvoice = row.find('th').eq(0).text().trim();
+    var idCustomer = row.find('td').eq(0).text().trim();
+    var idStaff = row.find('select.select-staff').val().trim();
+    var dateCreated = row.find('td').eq(2).text().trim();
+    var status = row.find('td').eq(3).text().trim();
+
+    var data = {
+        idInvoice: idInvoice,
+        idCustomer: idCustomer,
+        idStaff: idStaff,
+        dateCreated: dateCreated,
+        status: status
+    };
+
+    fetch("/admin/v1/invoice/upgrade_to_one_from_two/" + idInvoice, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error("Network response was not ok " + response.statusText);
+    }
+    return response.json();
+})
+.then(data => {
+    console.log("Success:", data);
+    // Hiển thị thông báo thành công nếu trạng thái là 200
+    alert("Thành công");
+    // Reload lại trang
+    location.reload();
+})
+
+.catch(error => {
+    console.error("There was a problem with your fetch operation:", error);
+    // Hiển thị thông báo lỗi nếu có lỗi xảy ra
+    alert("Lỗi server");
+});
+
+    console.log("IDInvoice: " + idInvoice);
+    console.log("IDCustomer: " + idCustomer);
+    console.log("IDStaff: " + idStaff);
+    console.log("DateCreated: " + dateCreated);
+    console.log("Status: " + status);
+    }
+
+  
+});
+
+
+
     </script>
 
 <%- include('../layout/footer.ejs')%>

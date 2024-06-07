@@ -13,6 +13,7 @@ const controllerCheckout = require("../controller/webClientController/checkoutCo
 const controllerGuild = require("../controller/webClientController/guildController")
 const controllerProfile = require("../controller/webClientController/profileController")
 const detailforgotpassword = require("../controller/webClientController/detailforgotpassword")
+const controllerLogout = require("../controller/webClientController/logoutController")
 const {verifyAccessToken ,verifyAccessTokenCheckout} = require("../utils/jwt_services")
 
 // get sign 
@@ -55,9 +56,7 @@ router.get("/cart", controllerCart.getCart)
 
 // get checkout 
 router.get("/checkout" ,controllerCheckout.getCheckout ) 
-router.post("/checkout" , verifyAccessTokenCheckout , controllerCheckout.postCheckout ,
- controllerCheckout.postCheckout2 ,
- controllerCheckout.thanhtoanonline ) 
+router.post("/checkout" , verifyAccessTokenCheckout , controllerCheckout.postCheckout , controllerCheckout.postCheckout2 , controllerCheckout.thanhtoanonline ) 
 
 
 
@@ -69,4 +68,6 @@ router.get("/guild" ,controllerGuild.getGuild)
 router.get("/profile" , verifyAccessToken , controllerProfile.getProfile)
 router.post("/editprofile" , verifyAccessToken , controllerProfile.updateAccountInfo)
 router.post("/changepassword" , verifyAccessToken , controllerProfile.changePassword)
+// post logout
+router.post("/logout", verifyAccessToken , controllerLogout.postLogout  )
 module.exports = router;
