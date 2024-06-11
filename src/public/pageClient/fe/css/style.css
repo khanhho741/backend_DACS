@@ -1213,3 +1213,7 @@ textarea.form-control {
 .hide {
 	display: none;
 }
+
+.btn-searchprice:hover {
+    background-color: #f0e9e9;
+}

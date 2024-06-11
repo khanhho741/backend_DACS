@@ -79,9 +79,7 @@
                     <%= item.CitizenIdentificationCode%>
                   </td>
 
-                  <td>
-                    <%= item.DateOfBirth%>
-                  </td>
+                  <td><%= new Date(item.DateOfBirth).toLocaleDateString('vi-VN') %></td>
 
                   <td>
                     <%= item.Sex%>

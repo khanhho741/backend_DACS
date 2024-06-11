@@ -5,7 +5,7 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Quản lý phiếu nhập hàng
+      Quản lý nhập hàng
     </h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -19,17 +19,16 @@
     <!-- Default box -->
     <div class="box">
       <div class="box-body">
-        <form action="http://localhost:8082/admin/v1/imported/edit/<%= data[0].IDImportedProducts%>" method="post">
+        <form action="/admin/v1/imported/create" method="post">
           <div class="form-group mb-3">
             <label for="exampleInputIDStaff">IDStaff</label>
             <select name="IDStaff" class="form-control" id="exampleInputIDStaff">
               <option>chọn danh mục</option>
               <% staffData.map((item)=> { %>
-                <option value="<%= item.IDStaff %>"
-                    <%=item.IDStaff===data[0].IDStaff ? 'selected' : '' %>>
-                    <%= item.StaffName%>
+                  <option value="<%= item.IDStaff %>">
+                      <%= item.StaffName%>
 
-                </option>
+                  </option>
                   <% }) %>
             </select>
         </div>
@@ -39,10 +38,10 @@
             <select name="IDWarehouse" class="form-control" id="exampleInputIDWarehouse">
               <option>chọn danh mục</option>
               <% warehouseData.map((item)=> { %>
-                <option value="<%= item.IDWarehouse %>"
-                    <%=item.IDWarehouse===data[0].IDWarehouse ? 'selected' : '' %>>
-                    <%= item.WarehouseName %>
-                </option>
+                  <option value="<%= item.IDWarehouse %>">
+                      <%= item.WarehouseName%>
+
+                  </option>
                   <% }) %>
             </select>
         </div>
@@ -73,7 +72,7 @@
 
   const postRequired = async (requestBody) => {
     try {
-      const response = await fetch('http://localhost:8082/admin/v1/imported/edit/<%= data[0].IDImportedProducts%>', {
+      const response = await fetch('/admin/v1/imported/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -82,13 +81,13 @@
       });
 
       if (response.ok) {
-        console.log('Imported update successfully!');
-        alert("Imported update successfully!");
+        console.log('Imported created successfully!');
+        alert("Imported created successfully!");
         document.querySelector("#exampleInputIDStaff").value = "";
         document.querySelector("#exampleInputIDWarehouse").value = "";
         window.location.href = 'http://localhost:8082/admin/v1/imported';
       } else if (response.status === 409) {
-        alert("Failed to update imported: Duplicate data found");
+        alert("Failed to create imported: Duplicate data found");
       } else {
         alert("Server error: " + response.statusText);
       }

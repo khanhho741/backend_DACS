@@ -10,7 +10,7 @@ const webAdminControllerStaff = require("../controller/webAdminController/staffC
 const webAdminControllerDocument = require("../controller/webAdminController/documentsController")
 const webAdminControllerImported= require("../controller/webAdminController/importedController")
 const webAdminControllerDeliveryNotes = require("../controller/webAdminController/deliverynoteController")
-
+const webAdminControllerLogin = require("../controller/webAdminController/loginController")
 const webAdminControllerInvoice = require("../controller/webAdminController/invoiceController")
 
 
@@ -19,7 +19,8 @@ const uploadCloud = require("../middlewares/uploadFileCould")
 const assignPathNameImage = require("../middlewares/assignPathNameImage");
 const deleteImage = require("../middlewares/deleteFileCould")
 
-
+router.get("/signinAdmin" , webAdminControllerLogin.getSignAdmin)
+router.post("/signinAdmin"  ,webAdminControllerLogin.postSignAdmin)
 // upload file could 
 router.post("/admin/v1/cloudinary-upload" , uploadCloud.array('image') , webAdminControllerProducts.handleUploadFileCould )
 router.delete("/admin/v1/cloudinary-upload" , deleteImage , webAdminControllerProducts.handleDeleteFileCould  )
@@ -29,9 +30,12 @@ router.get("/admin/v1",webAdminControllerDashBoard.getAdminV1Dashboard)
 
 // accounts
 router.get('/admin/v1/accounts', webAdminControllerAccounts.getAdminV1Accounts);
-router.post('/admin/v1/accounts', webAdminControllerAccounts.postAdminV1Accounts);
 router.get('/admin/v1/accounts/edit/:id', webAdminControllerAccounts.getAdminV1AccountsEdit);
 router.get('/admin/v1/accounts/create',webAdminControllerAccounts.getAdminV1AccountsCreate)
+router.post('/admin/v1/accounts/edit/:id',webAdminControllerAccounts.postAdminV1AccountsEdit)
+router.post('/admin/v1/accounts/delete/:id',webAdminControllerAccounts.postAdminV1AccountsDelete)
+router.post('/admin/v1/accounts/create',webAdminControllerAccounts.postAdminV1AccountsCreate)
+
 
 //customer
 router.get('/admin/v1/customer', webAdminControllerCustomer.getAdminV1Customers);
@@ -96,7 +100,11 @@ router.post('/admin/v1/invoice/upgrade_to_one_from_two/:id',webAdminControllerIn
 
 //imported
 router.get("/admin/v1/imported",webAdminControllerImported.getAdminV1Imported)
-
+router.get('/admin/v1/imported/create',webAdminControllerImported.getAdminV1ImportedCreate)
+router.post('/admin/v1/imported/create',webAdminControllerImported.postAdminV1ImportedCreate)
+router.get('/admin/v1/imported/edit/:id',webAdminControllerImported.getAdminV1ImportedEdit)
+router.post('/admin/v1/imported/edit/:id',webAdminControllerImported.postAdminV1ImportedEdit)
+router.post('/admin/v1/imported/delete/:id',webAdminControllerImported.postAdminV1ImportedDelete)
 // deliveryNotes
 router.get("/admin/v1/deliverynotes",webAdminControllerDeliveryNotes.getDeliveryNote)
 router.post("/admin/v1/deliverynotes/edit/:id",webAdminControllerDeliveryNotes.postDeliveryNote)

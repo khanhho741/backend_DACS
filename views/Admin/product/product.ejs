@@ -40,8 +40,10 @@
                                     <th scope="col">IDProduct</th>
                                     <th scope="col">ProductName</th>
                                     <th scope="col">ProductTypeName</th>
+                                    <th scope="col">SupplierName</th>
                                     <th scope="col">price/sale_price</th>
                                     <th scope="col">status</th>
+                                    <th scope="col">image</th>
                                  
                                 </tr>
                             </thead>
@@ -60,17 +62,22 @@
                                         <%= item.ProductTypeName%>
                                     </td>
                                     <td>
+                                        <%= item.SupplierName %>
+                                    </td>
+                                    <td>
                                         <%= item.Price %>/<%= item.Sale%>
                                     </td>
                                     <td>
                                         <%= item.status==0 ? "tạm ẩn" : "hiển thị" %>
                                     </td>
+                                    
 
                                     <td>
-                                        <img width="70"
-                                            src="https://thoitrangdarkt-com.onrender.com/congkhai/img_product/<%= item.image %>"
-                                            alt="">
-                                        <input hidden type="text" value="<%= item.image%>">
+                                        <% if (item.UrlImages) { %>
+                                            <img width="70" src="<%= item.UrlImages %>" alt="">
+                                        <% } else { %>
+                                            No Image
+                                        <% } %>
                                     </td>
 
                                     <td>

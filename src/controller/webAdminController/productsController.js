@@ -366,21 +366,20 @@ let getAdminV1Products = async (req, res) => {
     let _page = req.query.page ? req.query.page : 1;
     let limit = 10;
     let start = (_page - 1) * limit;
-    // let totalRow = 20;
     let name = req.query.name;
 
-    // total tổng các item trong database
+    // Tính tổng số sản phẩm trong database
     const [total, fields] = await pool.execute(
-      "select count(*) as total from product"
+      "SELECT count(*) as total from product"
     );
     let totalRow = total[0].total;
 
-    // tong so trang
+    // Tính tổng số trang
     let totalPage = Math.ceil(totalRow / limit);
 
     if (name) {
       const [rows, fields] = await pool.execute(
-        "SELECT * FROM `product` p JOIN category c ON p.IDProductType = c.IDProductType WHERE p.`ProductTypeName` LIKE ? LIMIT ? , ?",
+        "SELECT p.*, c.*, s.SupplierName, i.UrlImages FROM product p JOIN category c ON p.IDProductType = c.IDProductType JOIN supplier s ON p.IDSupplier = s.IDSupplier LEFT JOIN productimagesdetails pid ON p.IDProduct = pid.IDProduct LEFT JOIN images i ON pid.IDImages = i.IDImages WHERE p.ProductTypeName LIKE ? LIMIT ?, ?",
         [`%${name}%`, start, limit]
       );
 
@@ -391,7 +390,10 @@ let getAdminV1Products = async (req, res) => {
       });
     } else {
       const [rows, fields] = await pool.execute(
-        "SELECT p.*, c.* FROM `product` p JOIN producttype c ON p.IDProductType = c.IDProductType LIMIT "+start+ "," + limit);
+        "SELECT p.*, c.*, s.SupplierName, i.UrlImages FROM product p JOIN producttype c ON p.IDProductType = c.IDProductType JOIN supplier s ON p.IDSupplier = s.IDSupplier LEFT JOIN productimagesdetails pid ON p.IDProduct = pid.IDProduct LEFT JOIN images i ON pid.IDImages = i.IDImages LIMIT ?, ?",
+        [start, limit]
+      );
+
       res.render("./Admin/product/product.ejs", {
         dataProduct: rows ? rows : [],
         totalPage: totalPage,

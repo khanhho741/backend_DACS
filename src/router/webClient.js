@@ -16,6 +16,8 @@ const detailforgotpassword = require("../controller/webClientController/detailfo
 const controllerLogout = require("../controller/webClientController/logoutController")
 const {verifyAccessToken ,verifyAccessTokenCheckout} = require("../utils/jwt_services")
 
+
+
 // get sign 
 router.get("/signin" , controllerSgin.getSign)
 router.post("/signin"  ,controllerSgin.postSign)

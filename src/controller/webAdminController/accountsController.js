@@ -1,4 +1,5 @@
 const pool = require("../../models/connectDB");
+const { hashPassword } = require('../../utils/helpers');
 
 
 let getAdminV1Accounts = async (req, res) => {
@@ -47,44 +48,129 @@ let getAdminV1Accounts = async (req, res) => {
 
 
 
-let postAdminV1Accounts = async (req, res) => {
+const postAdminV1AccountsCreate = async (req, res) => {
     try {
-        console.log("day la body delete ",req.body.Username)
-        if (req.body.id) {
-            // Kiểm tra xem người dùng có tồn tại không
-            const user = await pool.query('SELECT * FROM user WHERE Username = $1', [req.body.Username]);
-            if (user.rows.length > 0) {
-                console.log(user)
-                // Nếu người dùng tồn tại, thực hiện xóa
-                const result = await pool.query('DELETE FROM user WHERE Username = $1', [req.body.Username]);
-                if (result.rowCount > 0) {
-                    // Xóa thành công
-                    res.status(200).json({ message: 'User deleted successfully' });
-                } else {
-                    // Người dùng không tồn tại
-                    res.status(404).json({ message: 'User not found' });
-                }
-            } else {
-                // Người dùng không tồn tại
-                res.status(404).json({ message: 'User not found' });
-            }
-        } else {
-            // Không có id được cung cấp
-            res.status(400).json({ message: 'Bad Request: Missing user id' });
+        const { Username, Email, Password, Check } = req.body;
+
+        // Mã hóa mật khẩu
+        const hashedPassword = await hashPassword(Password);
+
+        // Kiểm tra trùng lặp
+        const sqlCheckDuplicate = "SELECT * FROM user WHERE Username = ? OR Email = ?";
+        const [duplicateRows] = await pool.execute(sqlCheckDuplicate, [Username, Email]);
+        if (duplicateRows.length > 0) {
+            return res.status(409).json({ message: "Duplicate data found for User (Name or Email)" });
         }
-    } catch (err) {
-        // Xử lý lỗi nếu có
-        console.error('Error executing query', err);
-        res.status(500).json({ message: 'Internal Server Error' });
+
+        const sqlInsert = "INSERT INTO user (Username, Email, Password, `Check`) VALUES (?, ?, ?, ?)";
+        await pool.execute(sqlInsert, [Username, Email, hashedPassword, Check]);
+        return res.status(201).json({ message: "Created Successfully" });
+    } catch (error) {
+        console.error('Error creating user:', error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
 
 
-let getAdminV1AccountsEdit = async (req,res)=>{
-    const id = req.params.id
-    console.log("id ",id)
-    return await res.render("./Admin/accounts/accountsEdit.ejs")
-}
+let postAdminV1AccountsEdit = async (req, res) => {
+    try {
+        const itemId = req.params.id;
+        const { Email, Password, Check } = req.body;
+
+        if (!itemId || !Email || !Password || !Check) {
+            console.log("Thông tin không đủ hoặc không hợp lệ.");
+            return res.status(400).json({ message: "Thông tin không đủ hoặc không hợp lệ." });
+        }
+
+        const [rows] = await pool.execute("SELECT * FROM `user` WHERE Username = ?", [itemId]);
+
+        if (!rows || rows.length === 0) {
+            console.log("user không tồn tại.");
+            return res.status(404).json({ message: "user không tồn tại." });
+        }
+
+        const [existingRows] = await pool.execute("SELECT * FROM `user` WHERE Username = ?", [itemId]);
+
+        if (existingRows && existingRows.length > 0 && existingRows[0].Username !== itemId) {
+            console.log("Tên user đã tồn tại.");
+            return res.status(400).json({ message: "Tên user đã tồn tại." });
+        }
+
+        const [updateRows] = await pool.execute(
+            "UPDATE `user` SET Email = ?, Password = ?, `Check` = ? WHERE Username = ?",
+            [Email, Password, Check, itemId]
+        );
+
+        if (updateRows.affectedRows > 0) {
+            console.log("Đã cập nhật thông tin user thành công.");
+            return res.status(200).json({ message: "Đã cập nhật thông tin user thành công." });
+        } else {
+            console.log("Không có bản ghi nào được cập nhật.");
+            return res.status(500).json({ message: "Không có bản ghi nào được cập nhật." });
+        }
+    } catch (error) {
+        console.error("Lỗi xử lý yêu cầu POST:", error);
+        res.status(500).json({ message: "Đã xảy ra lỗi server." });
+    }
+};
+
+let postAdminV1AccountsDelete = async (req, res) => {
+    const itemId = req.params.id;
+
+    try {
+        const connection = await pool.getConnection();
+        await connection.beginTransaction();
+
+        try {
+            const [existingRows] = await connection.execute("SELECT * FROM `user` WHERE Username = ?", [itemId]);
+
+            if (!existingRows || existingRows.length === 0) {
+                console.log("user không tồn tại.");
+                await connection.rollback();
+                return res.status(404).json({ message: "user không tồn tại." });
+            }
+
+            const [deleteRows] = await connection.execute("DELETE FROM `user` WHERE Username = ?", [itemId]);
+
+            if (deleteRows.affectedRows > 0) {
+                console.log("user đã được xóa thành công.");
+                await connection.commit();
+                return res.status(200).json({ message: "user đã được xóa thành công." });
+            } else {
+                console.log("Không có bản ghi nào được xóa.");
+                await connection.rollback();
+                return res.status(500).json({ message: "Không có bản ghi nào được xóa." });
+            }
+        } catch (error) {
+            console.error("Lỗi xử lý yêu cầu DELETE:", error);
+            await connection.rollback();
+            res.status(500).json({ message: "Đã xảy ra lỗi server." });
+        } finally {
+            connection.release();
+        }
+    } catch (error) {
+        console.error("Lỗi kết nối cơ sở dữ liệu:", error);
+        res.status(500).json({ message: "Internal Server Error - Database connection" });
+    }
+};
+
+let getAdminV1AccountsEdit = async (req, res) => {
+    const itemId = req.params.id;
+    try {
+        const [rows] = await pool.execute("SELECT * FROM `user` WHERE Username = ?", [itemId]);
+
+        if (!rows || rows.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.render("./Admin/accounts/accountsEdit.ejs", {
+            row: rows,
+        });
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
 
 
 let getAdminV1AccountsCreate = (req,res) =>{
@@ -93,7 +179,9 @@ let getAdminV1AccountsCreate = (req,res) =>{
 
 module.exports = {
     getAdminV1Accounts,
-    postAdminV1Accounts,
     getAdminV1AccountsEdit,
-    getAdminV1AccountsCreate
+    getAdminV1AccountsCreate,
+    postAdminV1AccountsCreate,
+    postAdminV1AccountsEdit,
+    postAdminV1AccountsDelete
 }

@@ -1,196 +1,166 @@
 <%- include('../layout/header.ejs') %>
-  <%- include('../layout/aside.ejs') %>
-    <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
-      <!-- Content Header (Page header) -->
-      <section class="content-header">
-        <h1>
-          Quản lý danh mục
-        </h1>
-        <ol class="breadcrumb">
-          <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-          <li><a href="#">Examples</a></li>
-          <li class="active">Blank page</li>
-        </ol>
-      </section>
+<%- include('../layout/aside.ejs') %>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Quản lý danh mục
+    </h1>
+    <ol class="breadcrumb">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+      <li><a href="#">Examples</a></li>
+      <li class="active">Blank page</li>
+    </ol>
+  </section>
 
-      <!-- Main content -->
-      <section class="content">
+  <!-- Main content -->
+  <section class="content">
 
-        <!-- Default box -->
-        <div class="box">
+    <!-- Default box -->
+    <div class="box">
 
-          <div class="box-body">
-
-
-            <form action="https://thoitrangdarkt-com.onrender.com/api/v1/create-user" method="post">
-
-              <!-- email -->
-              <div class="form-group">
-                <label for="exampleInputEmail1">Email address</label>
-                <input name="Email" type="email" class="form-control" id="exampleInputEmail1"
-                  aria-describedby="emailHelp">
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
-                  else.</small>
-              </div>
-
-              <!-- username -->
-              <div class="form-group">
-                <label for="exampleInputPassword1">Username</label>
-                <input name="UserName" type="text" class="form-control" id="exampleInputUsername1">
-              </div>
-
-              <!-- password -->
-              <div class="form-group">
-                <label for="exampleInputPassword1">Password</label>
-                <input name="PassWord" type="password" class="form-control" id="exampleInputPassword1">
-              </div>
-
-              <!-- comfirm password -->
-              <div class="form-group">
-                <label for="exampleInputPassword1">Comfirm Password</label>
-                <input name="ConfirmPassWord" type="password" class="form-control" id="exampleInputConfirmPassword1">
-              </div>
+      <div class="box-body">
 
 
-              <!-- button submit -->
-              <button type="submit" class="btn btn-primary btnSubmit"><i class="fa fa-save"></i> Submit</button>
-              <a href="/admin/v1/accounts" class="btn btn-default"><i class="fa fa-arrow-left"></i> Trở lại</a>
+        <form action="http://localhost:8082/admin/v1/accounts/create" method="post">
 
-            </form>
-
+          <!-- username -->
+          <div class="form-group">
+            <label for="exampleInputUsername1">Username</label>
+            <input name="Username" type="text" class="form-control" id="exampleInputUsername1">
           </div>
+        
+          <!-- email -->
+          <div class="form-group">
+            <label for="exampleInputEmail1">Email address</label>
+            <input name="Email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+          </div>
+        
+          <!-- password -->
+          <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            <input name="Password" type="password" class="form-control" id="exampleInputPassword1">
+          </div>
+        
+          <!-- check password -->
+          <div class="form-group">
+            <label for="exampleInputCheck1">Check</label>
+            <input name="Check" type="text" class="form-control" id="exampleInputCheck1" required>
+          </div>
+        
+          <!-- button submit -->
+          <button type="submit" class="btn btn-primary btnSubmit"><i class="fa fa-save"></i> Submit</button>
+          <a href="/admin/v1/accounts" class="btn btn-default"><i class="fa fa-arrow-left"></i> Trở lại</a>
+        
+        </form>
+        
 
-
-
-        </div>
-
-      </section>
+      </div>
 
     </div>
 
-    <%- include("../layout/footer.ejs") %>
+  </section>
 
-      <script>
+</div>
 
-        // check confirm password
-        function checkPasswordMatch() {
-          let password = document.querySelector("#exampleInputPassword1").value;
-          let confirmPassword = document.querySelector("#exampleInputConfirmPassword1").value;
-          if(password === confirmPassword){
-            return true
-          }
-          return false
-        }
+<%- include("../layout/footer.ejs") %>
+
+<script>
 
 
-        // check empty
-        const checkEmpty = () => {
-          let email = document.querySelector("#exampleInputEmail1")
-          let username = document.querySelector("#exampleInputUsername1")
-          let confirmpassword = document.querySelector("#exampleInputConfirmPassword1")
-          let password = document.querySelector("#exampleInputPassword1")
-          if (email.value == "" || username.value == "" || password.value == "" || confirmpassword.value == "") {
-            return false
-          }
-          return true
-        }
+  // check empty
+  const checkEmpty = () => {
+    let email = document.querySelector("#exampleInputEmail1");
+    let username = document.querySelector("#exampleInputUsername1");
+    let check = document.querySelector("#exampleInputCheck1");
+    let password = document.querySelector("#exampleInputPassword1");
+    if (email.value == "" || username.value == "" || password.value == "" || check.value == "") {
+      return false;
+    }
+    return true;
+  }
 
-        // check email
-        function checkEmail() {
-          let email = document.querySelector("#exampleInputEmail1");
-          const regexEmail =
-            /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-          let isEmailError = !regexEmail.test(email.value);
-          if (isEmailError) {
-            // Nếu có lỗi, bạn có thể thông báo lỗi hoặc thực hiện các hành động khác ở đây
-            isEmailError = true
-            return isEmailError;
-          }
-          return isEmailError = false
-        }
-        
+  // check email
+  function checkEmail() {
+    let email = document.querySelector("#exampleInputEmail1");
+    const regexEmail =
+      /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+    let isEmailError = !regexEmail.test(email.value);
+    if (isEmailError) {
+      // Nếu có lỗi, bạn có thể thông báo lỗi hoặc thực hiện các hành động khác ở đây
+      isEmailError = true;
+      return isEmailError;
+    }
+    return isEmailError = false;
+  }
 
-        // check length
-        // đúng 123@g.c
-        // phải có 123 , @ , g , c
-        function checkLength() {
-          let confirmpassword = document.querySelector("#exampleInputConfirmPassword1")
-          let password = document.querySelector("#exampleInputPassword1")
-          console.log(password)
-          if (password.value.length <= 5 && confirmpassword.value.length <= 5) {
-            return false
-          }
-          return true
-        }
+  // check length
+  // đúng 123@g.c
+  // phải có 123 , @ , g , c
+  function checkLength() {
+  //  let confirmPassword = document.querySelector("#exampleInputCheck1");
+    let password = document.querySelector("#exampleInputPassword1");
+    console.log(password)
+    if (password.value.length <= 5) {
+      return false;
+    }
+    return true;
+  }
 
-        // check kỹ tự hoa , kỹ tự thường , và số
+  const postRequired = async (requestBody) => {
+    try {
+      const response = await fetch('http://localhost:8082/admin/v1/accounts/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+  
+      if (response.status === 201) {
+        console.log('User created successfully!');
+        alert("User created successfully!");
+        document.querySelector("#exampleInputUsername1").value = "";
+        document.querySelector("#exampleInputPassword1").value = "";
+        document.querySelector("#exampleInputCheck1").value = "";
+        document.querySelector("#exampleInputEmail1").value = "";
+      } else if (response.status === 409) {
+        alert("Failed to create user: Duplicate data found");
+      } else {
+        alert("Error server: " + response.statusText);
+      }
+    } catch (error) {
+      console.error('Error during fetch:', error);
+      alert('Error during fetch:', error);
+    }
+  }
+  
+  // Btn click
+  let btn_submit = document.querySelector(".btnSubmit");
+  btn_submit.addEventListener("click", async (e) => {
+    e.preventDefault();
+    if (checkEmpty() == false) {
+      alert("Không để trống thông tin");
+    } else {
+      // Additional checks can be added here
+      if (checkLength() == false) {
+        alert("Độ dài mật khẩu quá ngắn");
+      } else if (checkEmail() == true) {
+        alert("Email không hợp lệ");
+      } else {
+        // Example data
+        const exampleData = {
+          Username: document.querySelector("#exampleInputUsername1").value,
+          Password: document.querySelector("#exampleInputPassword1").value,
+          Check: document.querySelector("#exampleInputCheck1").value,
+          Email: document.querySelector("#exampleInputEmail1").value,
+        };
+  
+        // Call the postRequired function to send data
+        await postRequired(exampleData);
+      }
+    }
+  });
 
-        // function send requird
-        const postRequired = async (requestBody) => {
-          // Send POST request using Fetch API
-          try {
-            const response = await fetch('https://thoitrangdarkt-com.onrender.com/api/v1/create-user', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(requestBody),
-            });
-
-            // Check if the request was successful (status code 2xx)
-            if (response.ok) {
-              console.log('User created successfully!');
-
-            } else {
-              console.error('Failed to create user:', response.statusText);
-            }
-          } catch (error) {
-            console.error('Error during fetch:', error);
-          }
-        }
-
-
-        // btn click
-        let btn_submit = document.querySelector(".btnSubmit");
-        btn_submit.addEventListener("click", async (e) => {
-          e.preventDefault();
-          if (checkEmpty() == false) {
-            alert("Không để trống thông tin");
-          } else {
-            // Additional checks can be added here
-            if (checkLength() == false) {
-              alert("Độ dài mật khẩu quá ngắn");
-            } else if (checkEmail() == true) {
-              alert("Email không hợp lệ");
-            } else if (checkPasswordMatch()==false) {
-              alert("Password và Confirm Password không trùng khớp");
-            }
-            else {
-              // Example data
-              const exampleData = {
-                UserName: document.querySelector("#exampleInputUsername1").value,
-                PassWord: document.querySelector("#exampleInputPassword1").value,
-                ConfirmPassWord: document.querySelector("#exampleInputConfirmPassword1").value,
-                Email: document.querySelector("#exampleInputEmail1").value,
-
-              };
-
-              // Call the postRequired function to send data
-              await postRequired(exampleData);
-
-              // Inform the user about the success (or you can do something else)
-              alert("User created successfully!");
-              document.querySelector("#exampleInputUsername1").value = ""
-              document.querySelector("#exampleInputPassword1").value = ""
-              document.querySelector("#exampleInputConfirmPassword1").value = ""
-              document.querySelector("#exampleInputEmail1").value = ""
-
-            }
-          }
-        });
-
-        // 
-
-
-      </script>
+</script>

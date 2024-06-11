@@ -67,7 +67,7 @@
                     <a href="http://localhost:8082/admin/v1/accounts/edit/<%= item.Username%>"
                       class="btn btn-sm btn-primary btn-sua"><i class="fa fa-edit"></i> sua</a>
                      
-                    <a href="#" aboriginal="<%= item.Username%>" class="btn btn-sm btn-danger btn-xoa "><i
+                    <a href="#" data-id="<%= item.Username%>" class="btn btn-sm btn-danger btn-xoa "><i
                           class="fa fa-trash"></i>
                       xoa</a>
                   </td>
@@ -108,34 +108,31 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-      $(document).ready(function () {
-
-        function confirmDelete(username) {
-          const response = confirm("Bạn có chắc chắn muốn xóa?");
-          if (response) {
+      $(document).ready(function() {
+        // Xử lý sự kiện click trên nút xóa
+        $(".btn-xoa").on("click", function() {
+          // Lấy ID loại sản phẩm từ thuộc tính data-id của nút xóa
+          var productTypeId = $(this).data("id");
+          
+          // Hiển thị cảnh báo để xác nhận việc xóa
+          if (confirm("Bạn có chắc chắn muốn xóa user này không?")) {
+            // Gửi yêu cầu xóa loại sản phẩm đến máy chủ
             $.ajax({
-              url: 'http://localhost:8082/admin/v1/accounts',
-              type: 'POST',
-              contentType: 'application/json',
-              data: JSON.stringify({ Username: username }),
-              success: function (response) {
+              method: "POST",
+              url: "http://localhost:8082/admin/v1/accounts/delete/" + productTypeId,
+              success: function(response) {
+                // Nếu xóa thành công, reload trang để cập nhật dữ liệu mới
                 location.reload();
               },
-              error: function (xhr, status, error) {
-                console.error('Lỗi:', error);
+              error: function(xhr, status, error) {
+                // Xử lý lỗi nếu có
+                console.error("Error:", error);
+                alert("Đã xảy ra lỗi khi xóa user.");
               }
             });
           }
-        }
-
-        $('a.btn-xoa').click(function (e) {
-          e.preventDefault();
-          const username = $(this).attr('aboriginal');;
-          console.log("day la username ",username)
-          confirmDelete(username);
         });
-
-      })
+      });
     </script>
 
 <%- include('../layout/footer.ejs')%>

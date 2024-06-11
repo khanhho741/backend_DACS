@@ -22,39 +22,35 @@
         <div class="box-body">
 
 
-          <form action="http://localhost:8082/admin/v1/accounts/edit/" method="post">
+          <form action="http://localhost:8082/admin/v1/accounts/edit/<%= row[0].Username %>" method="post">
             <!-- username -->
             <div class="form-group">
               <label for="exampleInputPassword1">Username</label>
-              <input name="UserName" type="text" class="form-control" id="exampleInputUsername1">
+              <input name="Username" type="text" class="form-control" id="exampleInputUsername1" value="<%= row[0].Username%>" readonly>  
             </div>
+            <input type="text" class="cachCuChuoi" value="<%= row[0].Username %>" hidden>
 
             <!-- email -->
             <div class="form-group">
               <label for="exampleInputEmail1">Email address</label>
               <input name="Email" type="email" class="form-control" id="exampleInputEmail1"
-                aria-describedby="emailHelp">
-              <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
-                else.</small>
+                aria-describedby="emailHelp" value="<%= row[0].Email%>">
+      
             </div>
 
 
             <!-- password -->
             <div class="form-group">
               <label for="exampleInputPassword1">Password</label>
-              <input name="PassWord" type="password" class="form-control" id="exampleInputPassword1">
+              <input name="Password" type="password" class="form-control" id="exampleInputPassword1" value="<%= row[0].Password%>">
             </div>
 
-            <!-- comfirm password -->
-            <div class="form-group">
-              <label for="exampleInputPassword1">Comfirm Password</label>
-              <input name="ConfirmPassWord" type="password" class="form-control" id="exampleInputConfirmPassword1">
-            </div>
+            
 
              <!-- comfirm password -->
              <div class="form-group">
-              <label for="exampleInputPassword1">Check</label>
-              <input name="ConfirmPassWord" type="password" class="form-control" id="exampleInputConfirmPassword1">
+              <label for="exampleInputCheck1">Check</label>
+              <input name="Check" type="text" class="form-control" id="exampleInputCheck1" value="<%= row[0].Check%>">
             </div>
 
 
@@ -75,124 +71,68 @@
   </div>
 <script>
 
-    // check confirm password
-    function checkPasswordMatch() {
-      let password = document.querySelector("#exampleInputPassword1").value;
-      let confirmPassword = document.querySelector("#exampleInputConfirmPassword1").value;
-      if(password === confirmPassword){
-        return true
-      }
-      return false
-    }
 
+// check email
+function checkEmail() {
+  let email = document.querySelector("#exampleInputEmail1");
+  const regexEmail =
+    /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+  return !regexEmail.test(email.value);
+}
 
-    // check empty
-    const checkEmpty = () => {
-      let email = document.querySelector("#exampleInputEmail1")
-      let username = document.querySelector("#exampleInputUsername1")
-      let confirmpassword = document.querySelector("#exampleInputConfirmPassword1")
-      let password = document.querySelector("#exampleInputPassword1")
-      if (email.value == "" || username.value == "" || password.value == "" || confirmpassword.value == "") {
-        return false
-      }
-      return true
-    }
+// check length
+function checkLength() {
+  let password = document.querySelector("#exampleInputPassword1");
+  return password.value.length > 5;
+}
 
-    // check email
-    function checkEmail() {
-      let email = document.querySelector("#exampleInputEmail1");
-      const regexEmail =
-        /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-      let isEmailError = !regexEmail.test(email.value);
-      if (isEmailError) {
-        // Nếu có lỗi, bạn có thể thông báo lỗi hoặc thực hiện các hành động khác ở đây
-        isEmailError = true
-        return isEmailError;
-      }
-      return isEmailError = false
-    }
+const checkEmpty = () => {
+  const email = document.querySelector("#exampleInputEmail1");
+  const password = document.querySelector("#exampleInputPassword1");
+  const check = document.querySelector("#exampleInputCheck1");
 
-    // check length
-    // đúng 123@g.c
-    // phải có 123 , @ , g , c
-    function checkLength() {
-      let confirmpassword = document.querySelector("#exampleInputConfirmPassword1")
-      let password = document.querySelector("#exampleInputPassword1")
-      console.log(password)
-      if (password.value.length <= 5 && confirmpassword.value.length <= 5) {
-        return false
-      }
-      return true
-    }
+  // Kiểm tra xem các phần tử đã tồn tại trước khi truy cập thuộc tính value
+  return email && password && check && email.value.trim() !== "" && password.value.trim() !== "" && check.value.trim() !== "";
+};
 
-    // check kỹ tự hoa , kỹ tự thường , và số
-
-    // function send requird
-    const postRequired = async (requestBody) => {
-      // Send POST request using Fetch API
-      try {
-        const response = await fetch('http://localhost:8082/admin/v1/accounts/edit/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestBody),
-        });
-
-        // Check if the request was successful (status code 2xx)
-        if (response.ok) {
-          console.log('User created successfully!');
-
-        } else {
-          console.error('Failed to create user:', response.statusText);
-        }
-      } catch (error) {
-        console.error('Error during fetch:', error);
-      }
-    }
-
-
-    // btn click
-    let btn_submit = document.querySelector(".btnSubmit");
-    btn_submit.addEventListener("click", async (e) => {
-      e.preventDefault();
-      if (checkEmpty() == false) {
-        alert("Không để trống thông tin");
-      } else {
-        // Additional checks can be added here
-        if (checkLength() == false) {
-          alert("Độ dài mật khẩu quá ngắn");
-        } else if (checkEmail() == true) {
-          alert("Email không hợp lệ");
-        } else if (checkPasswordMatch()==false) {
-          alert("Password và Confirm Password không trùng khớp");
-        }
-        else {
-          // Example data
-          const exampleData = {
-            UserName: document.querySelector("#exampleInputUsername1").value,
-            PassWord: document.querySelector("#exampleInputPassword1").value,
-            ConfirmPassWord: document.querySelector("#exampleInputConfirmPassword1").value,
-            Email: document.querySelector("#exampleInputEmail1").value,
-
-          };
-
-          // Call the postRequired function to send data
-          await postRequired(exampleData);
-
-          // Inform the user about the success (or you can do something else)
-          alert("User created successfully!");
-          document.querySelector("#exampleInputUsername1").value = ""
-          document.querySelector("#exampleInputPassword1").value = ""
-          document.querySelector("#exampleInputConfirmPassword1").value = ""
-          document.querySelector("#exampleInputEmail1").value = ""
-
-        }
-      }
+const postRequired = async (requestBody) => {
+  try {
+    const response = await fetch(`http://localhost:8082/admin/v1/accounts/edit/${document.querySelector(".cachCuChuoi").value.trim()}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
     });
 
-    // 
+    const responseData = await response.json();
+    if (response.ok) {
+      alert(responseData.message);
+      window.location.href = 'http://localhost:8082/admin/v1/accounts';
+    } else {
+      alert(responseData.message);
+    }
+  } catch (error) {
+    console.error('Error during fetch:', error);
+  }
+};
 
-
+const btn_submit = document.querySelector(".btnSubmit");
+btn_submit.addEventListener("click", async (e) => {
+  e.preventDefault();
+  if (checkEmpty()) {
+    const exampleData = {
+      Email: document.querySelector("#exampleInputEmail1").value.trim(),
+      Password: document.querySelector("#exampleInputPassword1").value.trim(),
+      Check: document.querySelector("#exampleInputCheck1").value.trim(),
+    };
+    await postRequired(exampleData);
+    document.querySelector("#exampleInputEmail1").value = "";
+    document.querySelector("#exampleInputPassword1").value = "";
+    document.querySelector("#exampleInputCheck1").value = "";
+  } else {
+    alert("Không để trống thông tin");
+  }
+});
   </script>
 <%- include('../layout/footer.ejs')%>

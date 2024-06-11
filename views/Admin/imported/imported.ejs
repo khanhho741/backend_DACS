@@ -5,7 +5,7 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Quản lý nhập hàng
+      Quản lý phiếu nhập hàng
     </h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -30,7 +30,7 @@
               <input type="text" name="name" class="form-control-plaintext" id="staticEmail2"
                 placeholder="input field" style="width: 450px !important; height:34px !important;">
               <button type="submit" class="btn btn-primary mb-5"><i class="fa fa-search"></i></button>
-              <a href="http://localhost:8082/admin/v1/imported/create" class="btn btn-success mb-5"><i class="fa-solid fa-truck-fast"></i> Nhập hàng</a>
+              <a href="http://localhost:8082/admin/v1/imported/create" class="btn btn-success mb-5"><i class="fa fa-plus"></i> Create</a>
             </div>
           </form>
 
@@ -62,6 +62,7 @@
 
             
               <td>
+                <a href="http://localhost:8082/admin/v1/imported/import" class="btn btn-success mb-5"><i class="fa-solid fa-truck-fast"></i> Nhập hàng</a>
                 <a href="http://localhost:8082/admin/v1/imported/edit/<%= item.IDImportedProducts%>"
                   class="btn btn-sm btn-primary btn-sua"><i class="fa fa-edit"></i> Edit</a>
                  
@@ -107,14 +108,14 @@
     // Xử lý sự kiện click trên nút xóa
     $(".btn-xoa").on("click", function() {
       // Lấy ID loại sản phẩm từ thuộc tính data-id của nút xóa
-      var warehouseId = $(this).data("id");
+      var importedID = $(this).data("id");
       
       // Hiển thị cảnh báo để xác nhận việc xóa
-      if (confirm("Bạn có chắc chắn muốn xóa kho này không?")) {
+      if (confirm("Bạn có chắc chắn muốn phiếu nhập này không?")) {
         // Gửi yêu cầu xóa loại sản phẩm đến máy chủ
         $.ajax({
           method: "POST",
-          url: "http://localhost:8082/admin/v1/imported/delete/" + warehouseId,
+          url: "http://localhost:8082/admin/v1/imported/delete/" + importedID,
           success: function(response) {
             // Nếu xóa thành công, reload trang để cập nhật dữ liệu mới
             location.reload();
@@ -122,7 +123,7 @@
           error: function(xhr, status, error) {
             // Xử lý lỗi nếu có
             console.error("Error:", error);
-            alert("Đã xảy ra lỗi khi xóa kho.");
+            alert("Đã xảy ra lỗi khi xóa phiếu nhập.");
           }
         });
       }

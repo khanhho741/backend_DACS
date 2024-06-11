@@ -150,7 +150,7 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 <img src="http://localhost:8082/congkhai/pageAdmin/dist/img/user2-160x160.jpg" class="user-image"
                   alt="User Image">
-                <span class="hidden-xs">Alexander Pierce</span>
+                <span class="hidden-xs">${decodedString}</span>
               </a>
               <ul class="dropdown-menu">
                 <!-- User image -->
@@ -159,8 +159,7 @@
                     alt="User Image">
 
                   <p>
-                    Alexander Pierce - Web Developer
-                    <small>Member since Nov. 2012</small>
+                    ${decodedString}
                   </p>
                 </li>
                 <!-- Menu Body -->
@@ -184,7 +183,7 @@
                     <a href="#" class="btn btn-default btn-flat">Profile</a>
                   </div>
                   <div class="pull-right">
-                    <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                    <a href="#" id="logoutButton2" class="btn btn-default btn-flat">Sign out</a>
                   </div>
                 </li>
               </ul>
@@ -197,3 +196,46 @@
         </div>
       </nav>
     </header>
+
+    <script>
+        // Check if the usernameCookie exists before accessing its value
+        var usernameCookie = document.cookie.match(/(^|;) ?Username=([^;]*)(;|$)/);
+        var decodedString = usernameCookie ? decodeURIComponent(usernameCookie[2]) : '';
+  
+        // Use the decodedString value where needed
+        document.addEventListener('DOMContentLoaded', function () {
+          var hiddenUsername = document.querySelector('.user-menu .hidden-xs');
+          if (hiddenUsername) {
+            hiddenUsername.textContent = decodedString;
+          }
+          var userHeader = document.querySelector('.user-header p');
+          if (userHeader) {
+            userHeader.textContent = decodedString;
+          }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+          const logoutButton = document.getElementById('logoutButton2');
+          logoutButton.addEventListener('click', async function () {
+              try {
+                  const response = await fetch('/logout', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': 'Bearer ' + localStorage.getItem('accessToken') // Add your authorization header here if needed
+                      },
+                  });
+                  if (response.ok) {
+                      // Xóa token khỏi local storage hoặc cookie nếu cần
+                      localStorage.removeItem('accessToken');
+                      // Chuyển hướng người dùng về trang chủ
+                      window.location.href = "/signinAdmin";
+                  } else {
+                      console.error('Error logging out');
+                  }
+              } catch (error) {
+                  console.error('Error logging out:', error);
+              }
+          });
+      });
+    </script>

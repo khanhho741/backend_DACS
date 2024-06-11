@@ -59,11 +59,14 @@
                             <span class="filter-header">
                                 Giá
                             </span>
-                            <div class="price-range">
-                                <input type="text">
-                                <span>-</span>
-                                <input type="text">
-                            </div>
+                            <form method="get" id="priceRangeForm">
+                                <div class="price-range">
+                                    <input type="text" name="minPrice" placeholder="Min Price" oninput="submitPriceRangeForm()">
+                                    <span>-</span>
+                                    <input type="text" name="maxPrice" placeholder="Max Price" oninput="submitPriceRangeForm()">
+                                </div>
+                                <button type="submit" class="btn btn-searchprice mb-3" style="margin-top: -40px; padding: 2px 5px; border: 1px solid #000; color: #000; border-radius: 0;">Tìm kiếm</button>
+                            </form>
                         </div>
                         <div class="box-shop">
                             <ul class="filter-list">
