@@ -23,7 +23,7 @@ router.get("/signin" , controllerSgin.getSign)
 router.post("/signin"  ,controllerSgin.postSign)
 
 // get home 
-router.get("/home" ,controllerHome.getHome)
+router.get("/home" ,controllerHome.getHome, controllerHome.getLatestProducts)
 
 // post get register 
 router.get("/register",controllerRegister.getRegister)

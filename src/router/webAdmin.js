@@ -39,6 +39,7 @@ router.post('/admin/v1/accounts/create',webAdminControllerAccounts.postAdminV1Ac
 
 //customer
 router.get('/admin/v1/customer', webAdminControllerCustomer.getAdminV1Customers);
+router.get('/admin/v1/customer/view/:id', webAdminControllerCustomer.getAdminV1CustomersView);
 router.get('/admin/v1/exportToExcelCustomer', webAdminControllerCustomer.exportToExcel);
 
 //staff
@@ -108,6 +109,7 @@ router.post('/admin/v1/imported/delete/:id',webAdminControllerImported.postAdmin
 router.post('/admin/v1/imported/import/:id',webAdminControllerImported.postAdminV1ImportedImport)
 router.get('/admin/v1/imported/import/:id',webAdminControllerImported.getAdminV1ImportedImport)
 router.get('/admin/v1/importeddetail',webAdminControllerImported.getAdminV1ImportedDetails)
+router.get('/admin/v1/importeddetail/view/:id',webAdminControllerImported.getImportedProductDetailsView)
 
 
 

@@ -144,23 +144,18 @@
         alert("Độ dài mật khẩu quá ngắn");
       } else if (checkEmail() == true) {
         alert("Email không hợp lệ");
-      } else {
-        const selectedStaffType = document.querySelector("#IDStaffType").value;
-        // Check if selected staff type is 2 or 3
-        if (selectedStaffType !== "2" && selectedStaffType !== "3") {
-          alert("Vui lòng chọn Staff Type là 2 hoặc 3");
-        } else {
+      }  else {
           const exampleData = {
             Username: document.querySelector("#exampleInputUsername1").value,
             Password: document.querySelector("#exampleInputPassword1").value,
             Check: document.querySelector("#exampleInputCheck1").value,
             Email: document.querySelector("#exampleInputEmail1").value,
-            IDStaffType: selectedStaffType,
+            IDStaffType: document.querySelector("#IDStaffType").value,
           };
   
           await postRequired(exampleData);
         }
       }
-    }
+    
   });
 </script>

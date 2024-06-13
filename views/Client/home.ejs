@@ -62,7 +62,7 @@
                                 <span>Xe đạp thời trang</span>
                             </div>
                             <div class="category-btn mt-4 text-center">
-                                <a href="" class="btn-category">Xem Ngay</a>
+                                <a href="/shop" class="btn-category">Xem Ngay</a>
                             </div>
                         </div>
 
@@ -77,7 +77,7 @@
                                 <span>Xe đạp địa hình</span>
                             </div>
                             <div class="category-btn mt-4 text-center">
-                                <a href="" class="btn-category">Xem Ngay</a>
+                                <a href="/shop" class="btn-category">Xem Ngay</a>
                             </div>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                                 <span>Xe đạp thể thao</span>
                             </div>
                             <div class="category-btn mt-4 text-center">
-                                <a href="" class="btn-category">Xem Ngay</a>
+                                <a href="/shop" class="btn-category">Xem Ngay</a>
                             </div>
                         </div>
                     </div>
@@ -105,7 +105,7 @@
                                 <span>Xe đạp trẻ em</span>
                             </div>
                             <div class="category-btn mt-4 text-center">
-                                <a href="" class="btn-category">Xem Ngay</a>
+                                <a href="/shop" class="btn-category">Xem Ngay</a>
                             </div>
                         </div>
                     </div>
@@ -120,311 +120,25 @@
 
             <div class="product container-fluid">
                 <div class="row d-flex align-items-center">
-                    <div class="col-2">
-                        <div class="box">
+                    <% products.forEach(product => { %>
+                        <div class="col-2">
+                          <div class="box">
                             <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
+                              <a href="#"><img src="<%= product.url %>" alt="" class="product-img"></a>
+                              <div class="product-data">
+                                <span class="product-band"><%= product.SupplierName %></span>
+                                <h2 class="product-title"><%= product.ProductName %></h2>
+                                <p class="product-price"><%= product.Price %> VNĐ</p>
+                                <a href="#" class="product-btn">Xem chi tiết</a>
+                              </div>
                             </div>
+                          </div>
                         </div>
-                    </div>
-
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-2">
-                        <div class="box">
-                            <div class="product-content">
-                                <a href=""><img
-                                        src="/congkhai/pageClient/fe/images/z4388765697457_13940543d9f496b026bc139e6d864e74.jpg"
-                                        alt="" class="product-img"></a>
-
-                                <div class="product-data">
-                                    <span class="product-band">Dung Chinh</span>
-                                    <h2 class="product-title">Xe Đạp Touring LIV Alight 3 DD</h2>
-                                    <p class="product-price">10.000.000 VNĐ</p>
-                                    <a href="#" class="product-btn">Xem chi tiết</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                      <% }); %>
 
                 </div>
                 <div class="product-button d-flex justify-content-center">
-                    <a href="" class="btn-home-banner">Xem Thêm >></a>
+                    <a href="/shop" class="btn-home-banner">Xem Thêm >></a>
                 </div>
             </div>
             <div class="container-fluid d-flex justify-content-center mb-5">
@@ -436,142 +150,21 @@
             <div class="container-fluid swiper">
                 <div class="slide-container">
                     <div class="swiper-wrapper">
-                        <div class="featured-product swiper-slide">
-                            <div class="featured-box">
-                                <div class="featured-new">MỚI</div>
-                                <a href="#"><img
-                                        src="/congkhai/pageClient/fe/images/productnew1.png" alt=""
-                                        class="featured-img"></a>
+                        <% products.forEach(function(product) { %>
+                            <div class="featured-product swiper-slide">
+                                <div class="featured-box">
+                                    <div class="featured-new">MỚI</div>
+                                    <a href="#"><img src="<%= product.url %>" alt="" class="featured-img"></a>
+                                </div>
+                                <div class="featured-text">
+                                    <h3 class="featured-name"><%= product.ProductName %></h3>
+                                    <span class="featured-price"><%= product.Price %> VND</span>
+                                </div>
+                                <div class="featured-btn">
+                                    <a href="#" class="featured-button">Mua ngay <i class='bx bxs-shopping-bag'></i></a>
+                                </div>
                             </div>
-
-                            <div class="featured-text">
-                                <h3 class="featured-name">Xe Đạp GIANT</h3>
-                                <span class="featured-price">500.000 VND</span>
-                            </div>
-
-                            <div class="featured-btn">
-                                <a href="#" class="featured-button">Mua ngay <i class='bx bxs-shopping-bag'></i></a>
-                            </div>
-                        </div>
-                        <div class="featured-product swiper-slide">
-                            <div class="featured-box">
-                                <div class="featured-new">MỚI</div>
-                                <a href="#"><img
-                                        src="/congkhai/pageClient/fe/images/productnew1.png" alt=""
-                                        class="featured-img"></a>
-                            </div>
-
-                            <div class="featured-text">
-                                <h3 class="featured-name">Xe Đạp GIANT</h3>
-                                <span class="featured-price">500.000 VND</span>
-                            </div>
-
-                            <div class="featured-btn">
-                                <a href="#" class="featured-button">Mua ngay <i class='bx bxs-shopping-bag'></i></a>
-                            </div>
-                        </div>
-                        <div class="featured-product swiper-slide">
-                            <div class="featured-box">
-                                <div class="featured-new">MỚI</div>
-                                <a href="#"><img
-                                        src="/congkhai/pageClient/fe/images/productnew1.png" alt=""
-                                        class="featured-img"></a>
-                            </div>
-
-                            <div class="featured-text">
-                                <h3 class="featured-name">Xe Đạp GIANT</h3>
-                                <span class="featured-price">500.000 VND</span>
-                            </div>
-
-                            <div class="featured-btn">
-                                <a href="#" class="featured-button">Mua ngay <i class='bx bxs-shopping-bag'></i></a>
-                            </div>
-                        </div>
-                        <div class="featured-product swiper-slide">
-                            <div class="featured-box">
-                                <div class="featured-new">MỚI</div>
-                                <a href="#"><img
-                                        src="/congkhai/pageClient/fe/images/productnew1.png" alt=""
-                                        class="featured-img"></a>
-                            </div>
-
-                            <div class="featured-text">
-                                <h3 class="featured-name">Xe Đạp GIANT</h3>
-                                <span class="featured-price">500.000 VND</span>
-                            </div>
-
-                            <div class="featured-btn">
-                                <a href="#" class="featured-button">Mua ngay <i class='bx bxs-shopping-bag'></i></a>
-                            </div>
-                        </div>
-                        <div class="featured-product swiper-slide">
-                            <div class="featured-box">
-                                <div class="featured-new">MỚI</div>
-                                <a href="#"><img
-                                        src="/congkhai/pageClient/fe/images/productnew1.png" alt=""
-                                        class="featured-img"></a>
-                            </div>
-
-                            <div class="featured-text">
-                                <h3 class="featured-name">Xe Đạp GIANT</h3>
-                                <span class="featured-price">500.000 VND</span>
-                            </div>
-
-                            <div class="featured-btn">
-                                <a href="#" class="featured-button">Mua ngay <i class='bx bxs-shopping-bag'></i></a>
-                            </div>
-                        </div>
-                        <div class="featured-product swiper-slide">
-                            <div class="featured-box">
-                                <div class="featured-new">MỚI</div>
-                                <a href="#"><img
-                                        src="/congkhai/pageClient/fe/images/productnew1.png" alt=""
-                                        class="featured-img"></a>
-                            </div>
-
-                            <div class="featured-text">
-                                <h3 class="featured-name">Xe Đạp GIANT</h3>
-                                <span class="featured-price">500.000 VND</span>
-                            </div>
-
-                            <div class="featured-btn">
-                                <a href="#" class="featured-button">Mua ngay <i class='bx bxs-shopping-bag'></i></a>
-                            </div>
-                        </div>
-                        <div class="featured-product swiper-slide">
-                            <div class="featured-box">
-                                <div class="featured-new">MỚI</div>
-                                <a href="#"><img
-                                        src="/congkhai/pageClient/fe/images/productnew1.png" alt=""
-                                        class="featured-img"></a>
-                            </div>
-
-                            <div class="featured-text">
-                                <h3 class="featured-name">Xe Đạp GIANT</h3>
-                                <span class="featured-price">500.000 VND</span>
-                            </div>
-
-                            <div class="featured-btn">
-                                <a href="#" class="featured-button">Mua ngay <i class='bx bxs-shopping-bag'></i></a>
-                            </div>
-                        </div>
-                        <div class="featured-product swiper-slide">
-                            <div class="featured-box">
-                                <div class="featured-new">MỚI</div>
-                                <a href="#"><img
-                                        src="/congkhai/pageClient/fe/images/productnew1.png" alt=""
-                                        class="featured-img"></a>
-                            </div>
-
-                            <div class="featured-text">
-                                <h3 class="featured-name">Xe Đạp GIANT</h3>
-                                <span class="featured-price">500.000 VND</span>
-                            </div>
-
-                            <div class="featured-btn">
-                                <a href="#" class="featured-button">Mua ngay <i class='bx bxs-shopping-bag'></i></a>
-                            </div>
-                        </div>
+                        <% }) %>
                     </div>
                 </div>
 
@@ -589,7 +182,7 @@
                             <h2 class="banner-title">
                                 <span class="banner-subtitle">Công nghệ quốc tế</span><br> Thiết kế Việt Nam
                             </h2>
-                            <a href="#" class="banner-view">Xem ngay</a>
+                            <a href="/shop" class="banner-view">Xem ngay</a>
                         </div>
                     </div>
 
@@ -599,7 +192,7 @@
                             <h2 class="banner-title">
                                 <span class="banner-subtitle">Công nghệ quốc tế </span><br> Thiết kế Việt Nam
                             </h2>
-                            <a href="#" class="banner-view">Xem ngay</a>
+                            <a href="/shop" class="banner-view">Xem ngay</a>
                         </div>
 
                         <img src="/congkhai/pageClient/fe/images/bannerbike2.png" alt=""

@@ -368,6 +368,42 @@ let getAdminV1ImportedDetails = async (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
   }
 }
+
+let getImportedProductDetailsView = async (req, res) => {
+  try {
+    const itemId = req.params.id;
+
+    // Fetch product details along with supplier information
+    const [product, productFields] = await pool.execute(
+      "SELECT p.IDProduct, p.ProductName, p.Price, s.SupplierName " +
+      "FROM product p " +
+      "JOIN supplier s ON p.IDSupplier = s.IDSupplier"
+    );
+
+    // Fetch imported product details including images
+    const [rows, fields] = await pool.execute(
+      "SELECT ip.IDImportedProducts, ip.IDProduct, p.ProductName, s.SupplierName, p.Price, img.UrlImages, ip.Quantity, ip.InputPrice " +
+      "FROM importedproductsdetail ip " +
+      "JOIN product p ON ip.IDProduct = p.IDProduct " +
+      "JOIN supplier s ON p.IDSupplier = s.IDSupplier " +
+      "JOIN productimagesdetails pid ON p.IDProduct = pid.IDProduct " +
+      "JOIN images img ON pid.IDImages = img.IDImages " +
+      "WHERE ip.IDImportedProducts = ?",
+      [itemId]
+    );
+
+    // Render the view
+    res.render("./Admin/imported/importeddetailsview.ejs", {
+      data: rows,
+      productData: product,
+    });
+
+  } catch (error) {
+    console.error("Error fetching imported product details:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
     module.exports ={
         getAdminV1Imported,
         getAdminV1ImportedCreate,
@@ -378,4 +414,5 @@ let getAdminV1ImportedDetails = async (req, res) => {
         postAdminV1ImportedImport,
         getAdminV1ImportedImport,
         getAdminV1ImportedDetails,
+        getImportedProductDetailsView
     }

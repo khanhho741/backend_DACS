@@ -45,6 +45,28 @@ let getAdminV1Customers = async (req, res) => {
     }
 }
 
+let getAdminV1CustomersView = async (req, res) => {
+  const itemId = req.params.id;
+  try {
+      const [rows] = await pool.execute(
+          "SELECT * FROM `customer` WHERE IDCustomer = ?",
+          [itemId]
+      );
+
+      if (rows.length > 0) {
+          res.render("./Admin/accounts/customerview.ejs", {
+              row: rows[0]
+          });
+      } else {
+          res.status(404).json({ message: "customer member not found." });
+      }
+  } catch (err) {
+      console.error('Error fetching customer data', err);
+      res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+
 let exportToExcel = async (req, res) => {
     try {
         const [rows, fields] = await pool.execute("SELECT * FROM `customer`");
@@ -76,5 +98,6 @@ let exportToExcel = async (req, res) => {
 
 module.exports = {
     getAdminV1Customers,
-    exportToExcel
+    exportToExcel,
+    getAdminV1CustomersView
 }

@@ -1,0 +1,83 @@
+<%- include('../layout/header.ejs') %>
+<%- include('../layout/aside.ejs') %>
+
+<div class="content-wrapper">
+  <section class="content-header">
+    <h1>Thông tin khách hàng</h1>
+    <ol class="breadcrumb">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+      <li><a href="#">Examples</a></li>
+      <li class="active">Blank page</li>
+    </ol>
+  </section>
+
+  <section class="content">
+    <div class="box">
+      <div class="box-body text-center row">
+        <div class="form-group">
+            <img src="http://localhost:8082/congkhai/pageClient/fe/images/avatar-trang-4.jpg" width="150" alt="">
+          </div>
+
+          <div class="col-lg-6">
+          <div class="form-group mb-2">
+            <label for="idcustomer">IDCustomer: </label>
+            <input class="form-control text-center" value="<%= row.IDCustomer%>"></>
+          </div>
+        </div>
+        
+        <div class="col-lg-6">
+          <div class="form-group mb-2">
+            <label for="username">Username: </label>
+            <input class="form-control text-center" value="<%= row.Username%>"></>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group mb-2">
+            <label for="customername">CustomerName: </label>
+            <input class="form-control text-center" value="<%= row.CustomerName%>"></>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group mb-2">
+            <label for="phonecustomer">PhoneCustomer: </label>
+            <input class="form-control text-center" value="<%= row.PhoneCustomer%>"></>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group mb-2">
+            <label for="customeraddress">CustomerAddress: </label>
+            <input class="form-control text-center" value="<%= row.CustomerAddress%>"></>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="form-group mb-2">
+            <label for="CitizenIdentificationCode">CitizenIdentificationCode: </label>
+            <input class="form-control text-center" value="<%= row.CitizenIdentificationCode%>"></>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="form-group mb-2">
+            <label for="DateOfBirth">DateOfBirth: </label>
+            <input class="form-control text-center"  value="<%= new Date(row.DateOfBirth).toLocaleDateString('vi-VN')%>"></>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="form-group mb-2">
+            <label for="Sex">Sex: </label>
+            <input class="form-control text-center" value="<%= row.Sex%>"></>
+          </div>
+        </div>
+          <a href="/admin/v1/customer" class="btn btn-default"><i class="fa fa-arrow-left"></i> Trở lại</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<%- include("../layout/footer.ejs") %>
+
+<script>
+ 
+</script>
