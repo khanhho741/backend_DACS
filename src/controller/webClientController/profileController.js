@@ -39,6 +39,7 @@ const updateAccountInfo = async (req, res) => {
     
     // Lấy tên đăng nhập từ cookie
     const username = req.cookies.Username;
+    let dateOfBirthValue = dob ? dob : null;
 
     // Kiểm tra xem có thông tin cập nhật nào được cung cấp không
     if (!username && !phoneNumber && !address && !citizenID && !dob && !gender) {
@@ -47,7 +48,7 @@ const updateAccountInfo = async (req, res) => {
 
     // Thực hiện cập nhật thông tin tài khoản trong bảng customer
     const updateQuery = "UPDATE customer SET CustomerName = ?, PhoneCustomer = ?, CustomerAddress = ?, CitizenIdentificationCode = ?, DateOfBirth = ?, Sex = ? WHERE Username = ?";
-    await pool.query(updateQuery, [customerName, phoneNumber, address, citizenID, dob, gender, username]);
+    await pool.query(updateQuery, [customerName, phoneNumber, address, citizenID, dateOfBirthValue, gender, username]);
 
     return res.status(200).json({ message: "Account information updated successfully" });
   } catch (error) {
@@ -97,6 +98,8 @@ const changePassword = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+
 module.exports = {
   getProfile,
   updateAccountInfo,

@@ -31,7 +31,7 @@
                     placeholder="input field" style="width: 450px !important; height:34px !important;">
                   <button type="submit" class="btn btn-primary mb-5"><i class="fa fa-search"></i></button>
                   <a href="http://localhost:8082/admin/v1/accounts/create" class="btn btn-success mb-5"><i
-                      class="fa fa-plus"></i> Create</a>
+                      class="fa fa-plus"></i> Account staff</a>
                 </div>
               </form>
 
@@ -68,8 +68,8 @@
                       class="btn btn-sm btn-primary btn-sua"><i class="fa fa-edit"></i> sua</a>
                      
                     <a href="#" data-id="<%= item.Username%>" class="btn btn-sm btn-danger btn-xoa "><i
-                          class="fa fa-trash"></i>
-                      xoa</a>
+                          class="fa fa-cancel"></i>
+                      chan</a>
                   </td>
                   </tr>
                   <% }) %>
@@ -115,7 +115,7 @@
           var productTypeId = $(this).data("id");
           
           // Hiển thị cảnh báo để xác nhận việc xóa
-          if (confirm("Bạn có chắc chắn muốn xóa user này không?")) {
+          if (confirm("Bạn có chắc chắn muốn chặn user này không?")) {
             // Gửi yêu cầu xóa loại sản phẩm đến máy chủ
             $.ajax({
               method: "POST",
@@ -127,7 +127,7 @@
               error: function(xhr, status, error) {
                 // Xử lý lỗi nếu có
                 console.error("Error:", error);
-                alert("Đã xảy ra lỗi khi xóa user.");
+                alert("Đã xảy ra lỗi khi chặn user.");
               }
             });
           }

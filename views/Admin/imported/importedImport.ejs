@@ -1,12 +1,8 @@
 <%- include('../layout/header.ejs') %>
 <%- include('../layout/aside.ejs') %>
-<!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-  <!-- Content Header (Page header) -->
   <section class="content-header">
-    <h1>
-      Quản lý nhập hàng
-    </h1>
+    <h1>Quản lý nhập hàng</h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
       <li><a href="#">Examples</a></li>
@@ -14,38 +10,35 @@
     </ol>
   </section>
 
-  <!-- Main content -->
   <section class="content">
-    <!-- Default box -->
     <div class="box">
       <div class="box-body">
-        <form action="/admin/v1/imported/create" method="post">
+        <form id="importForm" method="post">
           <div class="form-group mb-3">
-            <label for="exampleInputIDStaff">IDStaff</label>
-            <select name="IDStaff" class="form-control" id="exampleInputIDStaff">
-              <option>chọn danh mục</option>
-              <% staffData.map((item)=> { %>
-                  <option value="<%= item.IDStaff %>">
-                      <%= item.StaffName%>
+            <label for="exampleInputIDImportedProducts">IDImportedProducts: </label>
+            <input name="IDImportedProducts" type="text" class="form-control" id="exampleInputIDImportedProducts" value="<%= importedProduct.IDImportedProducts %>" readonly>
+          </div>
 
-                  </option>
-                  <% }) %>
+          <div class="form-group mb-3">
+            <label for="exampleInputIDProduct">IDProduct</label>
+            <select name="IDProduct" class="form-control" id="exampleInputIDProduct">
+              <option>Chọn sản phẩm</option>
+              <% productData.map((item) => { %>
+                <option value="<%= item.IDProduct %>"><%= item.ProductName %></option>
+              <% }) %>
             </select>
-        </div>
-        
-        <div class="form-group">
-            <label for="exampleInputIDWarehouse">IDWarehouse</label>
-            <select name="IDWarehouse" class="form-control" id="exampleInputIDWarehouse">
-              <option>chọn danh mục</option>
-              <% warehouseData.map((item)=> { %>
-                  <option value="<%= item.IDWarehouse %>">
-                      <%= item.WarehouseName%>
+          </div>
 
-                  </option>
-                  <% }) %>
-            </select>
-        </div>
-          <!-- button submit -->
+          <div class="form-group mb-3">
+            <label for="exampleInputQuantity">Quantity: </label>
+            <input name="Quantity" type="number" class="form-control" id="exampleInputQuantity" required>
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputPrice">InputPrice: </label>
+            <input name="InputPrice" type="number" class="form-control" id="exampleInputPrice" required>
+          </div>
+
           <button type="submit" class="btn btn-primary btnSubmit"><i class="fa fa-save"></i> Submit</button>
           <a href="/admin/v1/imported" class="btn btn-default"><i class="fa fa-arrow-left"></i> Trở lại</a>
         </form>
@@ -53,59 +46,35 @@
     </div>
   </section>
 </div>
-<%- include("../layout/footer.ejs") %>
+<%- include('../layout/footer.ejs') %>
 
 <script>
-  // JavaScript code to fetch data and populate select fields dynamically
-  
+  document.getElementById('importForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-  // JavaScript code for form validation and submission
-  const checkEmpty = () => {
-    let idStaff = document.querySelector("#exampleInputIDStaff").value;
-    let idWarehouse = document.querySelector("#exampleInputIDWarehouse").value;
+    const form = e.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
 
-    if (idStaff === "" || idWarehouse === "") {
-      return false;
-    }
-    return true;
-  };
-
-  const postRequired = async (requestBody) => {
     try {
-      const response = await fetch('/admin/v1/imported/create', {
+      const response = await fetch(form.action, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify(data),
       });
 
       if (response.ok) {
-        console.log('Imported created successfully!');
-        alert("Imported created successfully!");
-        document.querySelector("#exampleInputIDStaff").value = "";
-        document.querySelector("#exampleInputIDWarehouse").value = "";
-        window.location.href = 'http://localhost:8082/admin/v1/imported';
-      } else if (response.status === 409) {
-        alert("Failed to create imported: Duplicate data found");
+        alert('Nhập hàng thành công!');
+        window.location.href = '/admin/v1/imported';
       } else {
-        alert("Server error: " + response.statusText);
+        const errorData = await response.json();
+        alert('Lỗi: ' + errorData.message);
       }
     } catch (error) {
-      alert('Error during fetch:', error);
-    }
-  };
-
-  document.querySelector(".btnSubmit").addEventListener("click", async (e) => {
-    e.preventDefault();
-    if (checkEmpty() == false) {
-      alert("Không để trống thông tin");
-    } else {
-      const exampleData = {
-        IDStaff: document.querySelector("#exampleInputIDStaff").value,
-        IDWarehouse: document.querySelector("#exampleInputIDWarehouse").value,
-      };
-      await postRequired(exampleData);
+      console.error('Error during fetch:', error);
+      alert('Đã xảy ra lỗi khi nhập hàng.');
     }
   });
 </script>

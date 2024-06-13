@@ -119,49 +119,56 @@ const pool = require("../../models/connectDB");
     };
   
     let postAdminV1ImportedEdit = async (req, res) => {
-        try {
+      try {
           const itemId = req.params.id;
           const { IDStaff, IDWarehouse }  = req.body;
           const currentDate = moment().format('YYYY-MM-DD HH:mm:ss');
-      
+  
           if (!IDStaff || !itemId || !IDWarehouse) {
-            console.log("Thông tin không đủ hoặc không hợp lệ.");
-            return res
-              .status(400)
-              .json({ message: "Thông tin không đủ hoặc không hợp lệ." });
+              console.log("Thông tin không đủ hoặc không hợp lệ.");
+              return res
+                  .status(400)
+                  .json({ message: "Thông tin không đủ hoặc không hợp lệ." });
           }
           
           const [rows] = await pool.execute(
-            "SELECT * FROM `imported products` WHERE IDImportedProducts = ?",
-            [itemId]
+              "SELECT * FROM `imported products` WHERE IDImportedProducts = ?",
+              [itemId]
           );
-      
+  
           if (!rows || rows.length === 0) {
-            console.log("Phiếu nhập không tồn tại.");
-            return res.status(404).json({ message: "Phiếu nhập không tồn tại." });
+              console.log("Phiếu nhập không tồn tại.");
+              return res.status(404).json({ message: "Phiếu nhập không tồn tại." });
           }
-      
+  
+          const importedProduct = rows[0];
+  
+          if (importedProduct.Status === 'Completed') {
+              console.log("Không thể chỉnh sửa phiếu nhập đã hoàn thành.");
+              return res.status(400).json({ message: "Không thể chỉnh sửa phiếu nhập đã hoàn thành." });
+          }
+  
           const [updateRows] = await pool.execute(
-            "UPDATE `imported products` SET IDStaff = ?, IDWarehouse = ?, DateCreated = ? WHERE IDImportedProducts = ?",
-            [IDStaff, IDWarehouse, currentDate, itemId]
+              "UPDATE `imported products` SET IDStaff = ?, IDWarehouse = ?, DateCreated = ? WHERE IDImportedProducts = ?",
+              [IDStaff, IDWarehouse, currentDate, itemId]
           );
-      
+  
           if (updateRows.affectedRows > 0) {
-            console.log("Đã cập nhật thông tin phiếu nhập thành công.");
-            return res
-              .status(200)
-              .json({ message: "Đã cập nhật thông tin phiếu nhập thành công." });
+              console.log("Đã cập nhật thông tin phiếu nhập thành công.");
+              return res
+                  .status(200)
+                  .json({ message: "Đã cập nhật thông tin phiếu nhập thành công." });
           } else {
-            console.log("Không có bản ghi nào được cập nhật.");
-            return res
-              .status(500)
-              .json({ message: "Không có bản ghi nào được cập nhật." });
+              console.log("Không có bản ghi nào được cập nhật.");
+              return res
+                  .status(500)
+                  .json({ message: "Không có bản ghi nào được cập nhật." });
           }
-        } catch (error) {
+      } catch (error) {
           console.error("Lỗi xử lý yêu cầu POST:", error);
           res.status(500).json({ message: "Đã xảy ra lỗi server." });
-        }
-      };
+      }
+  };
   
   let postAdminV1ImportedDelete = async (req, res) => {
     const itemId = req.params.id;
@@ -215,8 +222,152 @@ const pool = require("../../models/connectDB");
     }
   };
     
+  let postAdminV1ImportedImport = async (req, res) => {
+    try {
+        const { IDProduct, Quantity, InputPrice } = req.body;
+        const IDImportedProducts = req.params.id;
+        
+        // Check if the imported products exists and if it is completed
+        const [importedRows] = await pool.execute(
+            "SELECT * FROM `imported products` WHERE IDImportedProducts = ?",
+            [IDImportedProducts]
+        );
 
+        if (!importedRows || importedRows.length === 0) {
+            console.log("Phiếu nhập không tồn tại.");
+            return res.status(404).json({ message: "Phiếu nhập không tồn tại." });
+        }
 
+        const importedProduct = importedRows[0];
+
+        if (importedProduct.Status === 'Completed') {
+            console.log("Không thể nhập hàng cho phiếu nhập đã hoàn thành.");
+            return res.status(400).json({ message: "Không thể nhập hàng cho phiếu nhập đã hoàn thành." });
+        }
+
+        const sqlInsertOrUpdateDetail = `
+            INSERT INTO importedproductsdetail (IDImportedProducts, IDProduct, Quantity, InputPrice)
+            VALUES (?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE 
+                Quantity = VALUES(Quantity),
+                InputPrice = VALUES(InputPrice)
+        `;
+        
+        const sqlUpdateWarehouseDetail = `
+            INSERT INTO warehousedetails (IDWarehouse, IDProduct, QuantityInStock)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE QuantityInStock = QuantityInStock + VALUES(QuantityInStock)
+        `;
+        
+        const sqlUpdateImportedStatus = `
+            UPDATE \`imported products\` SET Status = 'Completed' WHERE IDImportedProducts = ?
+        `;
+
+        // Begin transaction
+        const connection = await pool.getConnection();
+        await connection.beginTransaction();
+
+        try {
+            // Insert or update detail of imported products
+            await connection.execute(sqlInsertOrUpdateDetail, [IDImportedProducts, IDProduct, Quantity, InputPrice]);
+
+            // Get IDWarehouse from imported products table
+            const [rows] = await connection.execute("SELECT IDWarehouse FROM `imported products` WHERE IDImportedProducts = ?", [IDImportedProducts]);
+            const IDWarehouse = rows[0].IDWarehouse;
+
+            // Update warehouse details
+            await connection.execute(sqlUpdateWarehouseDetail, [IDWarehouse, IDProduct, Quantity]);
+
+            // Update imported products status to 'Completed'
+            await connection.execute(sqlUpdateImportedStatus, [IDImportedProducts]);
+
+            await connection.commit();
+            connection.release();
+
+            return res.status(201).json({ message: "Imported Detail Created or Updated and Warehouse Updated Successfully" });
+        } catch (error) {
+            await connection.rollback();
+            connection.release();
+            console.error('Error creating or updating imported detail:', error);
+            res.status(500).json({ message: "Internal Server Error" });
+        }
+    } catch (error) {
+        console.error('Error creating imported detail:', error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+let getAdminV1ImportedImport = async (req, res) => {
+  try {
+      const IDImportedProducts = req.params.id;
+      
+      // Lấy thông tin sản phẩm
+      const [productData, productFields] = await pool.execute("SELECT * FROM `product`");
+
+      // Lấy thông tin chi tiết nhập hàng nếu cần
+      const [importedProductData, importedProductFields] = await pool.execute(
+          "SELECT * FROM `imported products` WHERE IDImportedProducts = ?",
+          [IDImportedProducts]
+      );
+
+      if (importedProductData.length <= 0) {
+          return res.status(404).json({ message: "Phiếu nhập không tồn tại." });
+      }
+
+      const importedProduct = importedProductData[0];
+
+      if (importedProduct.Status === 'Completed') {
+          console.log("Không thể chỉnh sửa chi tiết nhập hàng cho phiếu nhập đã hoàn thành.");
+          return res.status(400).json({ message: "Không thể chỉnh sửa chi tiết nhập hàng cho phiếu nhập đã hoàn thành." });
+      }
+
+      res.render("./Admin/imported/importedImport.ejs", {
+          importedProduct: importedProduct,
+          productData: productData ? productData : [],
+      });
+  } catch (error) {
+      console.error('Error fetching imported import view:', error);
+      res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+let getAdminV1ImportedDetails = async (req, res) => {
+  try {
+      let _page = req.query.page ? req.query.page : 1;
+      let limit = 5;
+      let start = (_page - 1) * limit;
+      let name = req.query.name;
+
+      // Get total number of items in the database
+      const [total, fields1] = await pool.execute("SELECT COUNT(*) AS total FROM `importedproductsdetail`");
+      let totalRow = total[0].total;
+
+      // Calculate total number of pages
+      let totalPage = Math.ceil(totalRow / limit);
+
+      let rows;
+      if (name) {
+          [rows, fields2] = await pool.execute(
+              "SELECT * FROM `importedproductsdetail` where `IDImportedProducts` like ? limit ? , ? ",
+              [`%${name}%`, start, limit]
+          );
+      } else {
+          [rows, fields2] = await pool.execute(
+              "SELECT * FROM `importedproductsdetail` limit ?, ?",
+              [start, limit]
+          );
+      }
+
+      res.render("./Admin/imported/importeddetails.ejs", {
+          dataUser: rows ? rows : [],
+          totalPage: totalPage,
+          page: parseInt(_page),
+      });
+
+  } catch (err) {
+      console.error('Error executing query', err);
+      res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
     module.exports ={
         getAdminV1Imported,
         getAdminV1ImportedCreate,
@@ -224,4 +375,7 @@ const pool = require("../../models/connectDB");
         postAdminV1ImportedCreate,
         postAdminV1ImportedEdit,
         postAdminV1ImportedDelete,
+        postAdminV1ImportedImport,
+        getAdminV1ImportedImport,
+        getAdminV1ImportedDetails,
     }

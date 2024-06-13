@@ -10,7 +10,7 @@ const webAdminControllerStaff = require("../controller/webAdminController/staffC
 const webAdminControllerDocument = require("../controller/webAdminController/documentsController")
 const webAdminControllerImported= require("../controller/webAdminController/importedController")
 const webAdminControllerDeliveryNotes = require("../controller/webAdminController/deliverynoteController")
-const webAdminControllerLogin = require("../controller/webAdminController/loginController")
+const webAdminControllerLogin = require("../controller/webAdminController/loginController.js")
 const webAdminControllerInvoice = require("../controller/webAdminController/invoiceController")
 
 
@@ -105,6 +105,12 @@ router.post('/admin/v1/imported/create',webAdminControllerImported.postAdminV1Im
 router.get('/admin/v1/imported/edit/:id',webAdminControllerImported.getAdminV1ImportedEdit)
 router.post('/admin/v1/imported/edit/:id',webAdminControllerImported.postAdminV1ImportedEdit)
 router.post('/admin/v1/imported/delete/:id',webAdminControllerImported.postAdminV1ImportedDelete)
+router.post('/admin/v1/imported/import/:id',webAdminControllerImported.postAdminV1ImportedImport)
+router.get('/admin/v1/imported/import/:id',webAdminControllerImported.getAdminV1ImportedImport)
+router.get('/admin/v1/importeddetail',webAdminControllerImported.getAdminV1ImportedDetails)
+
+
+
 // deliveryNotes
 router.get("/admin/v1/deliverynotes",webAdminControllerDeliveryNotes.getDeliveryNote)
 router.post("/admin/v1/deliverynotes/edit/:id",webAdminControllerDeliveryNotes.postDeliveryNote)

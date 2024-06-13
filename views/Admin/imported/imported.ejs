@@ -40,6 +40,8 @@
               <th scope="col">IDStaff</th>
               <th scope="col">IDWarehouse</th>
               <th scope="col">DateCreated</th>
+              <th scope="col">Status</th>
+
             </tr>
           </thead>
           <tbody>
@@ -60,12 +62,18 @@
 
               <td><%= item.DateCreated%></td>
 
-            
+              <td><%= item.Status%></td>
               <td>
-                <a href="http://localhost:8082/admin/v1/imported/import" class="btn btn-success mb-5"><i class="fa-solid fa-truck-fast"></i> Nhập hàng</a>
-                <a href="http://localhost:8082/admin/v1/imported/edit/<%= item.IDImportedProducts%>"
-                  class="btn btn-sm btn-primary btn-sua"><i class="fa fa-edit"></i> Edit</a>
-                 
+                <% if (item.Status === 'Completed') { %>
+                  <span class="btn btn-warning mb-5 disabled">Đã nhập hàng</span>
+                  <a href="http://localhost:8082/admin/v1/imported/edit/<%= item.IDImportedProducts%>"
+                    class="btn btn-sm btn-primary btn-sua disabled"><i class="fa fa-edit"></i> Edit</a>
+              <% } else { %>
+                  <a href="http://localhost:8082/admin/v1/imported/import/<%= item.IDImportedProducts %>" class="btn btn-success mb-5"><i class="fa-solid fa-truck-fast"></i> Nhập hàng</a>
+                  <a href="http://localhost:8082/admin/v1/imported/edit/<%= item.IDImportedProducts%>"
+                    class="btn btn-sm btn-primary btn-sua"><i class="fa fa-edit"></i> Edit</a>
+              <% } %>
+            
                   <a href="#" data-id="<%= item.IDImportedProducts%>" class="btn btn-sm btn-danger btn-xoa"><i class="fa fa-trash"></i> Delete</a>
               </td>
               </tr>

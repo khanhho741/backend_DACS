@@ -4,7 +4,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Quản lý danh mục
+        Cập nhật tài khoản
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -30,15 +30,6 @@
             </div>
             <input type="text" class="cachCuChuoi" value="<%= row[0].Username %>" hidden>
 
-            <!-- email -->
-            <div class="form-group">
-              <label for="exampleInputEmail1">Email address</label>
-              <input name="Email" type="email" class="form-control" id="exampleInputEmail1"
-                aria-describedby="emailHelp" value="<%= row[0].Email%>">
-      
-            </div>
-
-
             <!-- password -->
             <div class="form-group">
               <label for="exampleInputPassword1">Password</label>
@@ -46,11 +37,15 @@
             </div>
 
             
-
-             <!-- comfirm password -->
+             <!-- Check (select option) -->
              <div class="form-group">
               <label for="exampleInputCheck1">Check</label>
-              <input name="Check" type="text" class="form-control" id="exampleInputCheck1" value="<%= row[0].Check%>">
+              <select name="Check" class="form-control" id="exampleInputCheck1">
+                <option value="0" <%= row[0].Check === 0 ? 'selected' : '' %>>0</option>
+                <option value="1" <%= row[0].Check === 1 ? 'selected' : '' %>>1</option>
+                <option value="2" <%= row[0].Check === 2 ? 'selected' : '' %>>2</option>
+                <option value="3" <%= row[0].Check === 3 ? 'selected' : '' %>>3</option>
+              </select>
             </div>
 
 
@@ -71,6 +66,8 @@
   </div>
 <script>
 
+  console.log('Value of row[0].Check:', '<%= row[0].Check %>');
+  console.log('Selected option value:', document.querySelector('#exampleInputCheck1').value);
 
 // check email
 function checkEmail() {
@@ -87,12 +84,11 @@ function checkLength() {
 }
 
 const checkEmpty = () => {
-  const email = document.querySelector("#exampleInputEmail1");
   const password = document.querySelector("#exampleInputPassword1");
   const check = document.querySelector("#exampleInputCheck1");
 
   // Kiểm tra xem các phần tử đã tồn tại trước khi truy cập thuộc tính value
-  return email && password && check && email.value.trim() !== "" && password.value.trim() !== "" && check.value.trim() !== "";
+  return   password && check  && password.value.trim() !== "" && check.value.trim() !== "";
 };
 
 const postRequired = async (requestBody) => {
@@ -122,12 +118,10 @@ btn_submit.addEventListener("click", async (e) => {
   e.preventDefault();
   if (checkEmpty()) {
     const exampleData = {
-      Email: document.querySelector("#exampleInputEmail1").value.trim(),
       Password: document.querySelector("#exampleInputPassword1").value.trim(),
       Check: document.querySelector("#exampleInputCheck1").value.trim(),
     };
     await postRequired(exampleData);
-    document.querySelector("#exampleInputEmail1").value = "";
     document.querySelector("#exampleInputPassword1").value = "";
     document.querySelector("#exampleInputCheck1").value = "";
   } else {

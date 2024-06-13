@@ -49,39 +49,57 @@ let getAdminV1Accounts = async (req, res) => {
 
 
 const postAdminV1AccountsCreate = async (req, res) => {
+    const connection = await pool.getConnection(); // Lấy connection từ pool
+    await connection.beginTransaction(); // Bắt đầu transaction
+
     try {
-        const { Username, Email, Password, Check } = req.body;
+        const { Username, Email, Password, Check, IDStaffType } = req.body;
 
         // Mã hóa mật khẩu
         const hashedPassword = await hashPassword(Password);
 
         // Kiểm tra trùng lặp
         const sqlCheckDuplicate = "SELECT * FROM user WHERE Username = ? OR Email = ?";
-        const [duplicateRows] = await pool.execute(sqlCheckDuplicate, [Username, Email]);
+        const [duplicateRows] = await connection.execute(sqlCheckDuplicate, [Username, Email]);
         if (duplicateRows.length > 0) {
+            await connection.rollback(); // Hủy bỏ transaction nếu có dữ liệu trùng lặp
+            connection.release(); // Trả lại connection cho pool
             return res.status(409).json({ message: "Duplicate data found for User (Name or Email)" });
         }
 
-        const sqlInsert = "INSERT INTO user (Username, Email, Password, `Check`) VALUES (?, ?, ?, ?)";
-        await pool.execute(sqlInsert, [Username, Email, hashedPassword, Check]);
+        // Thêm vào bảng user
+        const sqlInsertUser = "INSERT INTO user (Username, Email, Password, `Check`) VALUES (?, ?, ?, ?)";
+        await connection.execute(sqlInsertUser, [Username, Email, hashedPassword, Check]);
+
+        // Thêm vào bảng staff với Username và IDStaffType từ request body
+        const sqlInsertStaff = "INSERT INTO staff (Username, IDStaffType) VALUES (?, ?)";
+        await connection.execute(sqlInsertStaff, [Username, IDStaffType]);
+
+        await connection.commit(); // Commit transaction
+        connection.release(); // Trả lại connection cho pool
         return res.status(201).json({ message: "Created Successfully" });
     } catch (error) {
-        console.error('Error creating user:', error);
+        await connection.rollback(); // Hủy bỏ transaction nếu có lỗi
+        connection.release(); // Trả lại connection cho pool
+        console.error('Error creating user and staff:', error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
 
-
 let postAdminV1AccountsEdit = async (req, res) => {
     try {
         const itemId = req.params.id;
-        const { Email, Password, Check } = req.body;
+        const {  Password, Check } = req.body;
 
-        if (!itemId || !Email || !Password || !Check) {
+        if (!itemId  || !Password || !Check) {
             console.log("Thông tin không đủ hoặc không hợp lệ.");
             return res.status(400).json({ message: "Thông tin không đủ hoặc không hợp lệ." });
         }
 
+        // Mã hóa mật khẩu mới
+        const hashedPassword = await hashPassword(Password);
+
+        // Kiểm tra xem user có tồn tại hay không
         const [rows] = await pool.execute("SELECT * FROM `user` WHERE Username = ?", [itemId]);
 
         if (!rows || rows.length === 0) {
@@ -89,6 +107,7 @@ let postAdminV1AccountsEdit = async (req, res) => {
             return res.status(404).json({ message: "user không tồn tại." });
         }
 
+        // Kiểm tra xem có trùng tên user khác không
         const [existingRows] = await pool.execute("SELECT * FROM `user` WHERE Username = ?", [itemId]);
 
         if (existingRows && existingRows.length > 0 && existingRows[0].Username !== itemId) {
@@ -96,9 +115,10 @@ let postAdminV1AccountsEdit = async (req, res) => {
             return res.status(400).json({ message: "Tên user đã tồn tại." });
         }
 
+        // Cập nhật thông tin user vào cơ sở dữ liệu
         const [updateRows] = await pool.execute(
-            "UPDATE `user` SET Email = ?, Password = ?, `Check` = ? WHERE Username = ?",
-            [Email, Password, Check, itemId]
+            "UPDATE `user` SET Password = ?, `Check` = ? WHERE Username = ?",
+            [hashedPassword, Check, itemId]
         );
 
         if (updateRows.affectedRows > 0) {
@@ -114,7 +134,7 @@ let postAdminV1AccountsEdit = async (req, res) => {
     }
 };
 
-let postAdminV1AccountsDelete = async (req, res) => {
+const postAdminV1AccountsDelete = async (req, res) => {
     const itemId = req.params.id;
 
     try {
@@ -125,24 +145,24 @@ let postAdminV1AccountsDelete = async (req, res) => {
             const [existingRows] = await connection.execute("SELECT * FROM `user` WHERE Username = ?", [itemId]);
 
             if (!existingRows || existingRows.length === 0) {
-                console.log("user không tồn tại.");
+                console.log("User không tồn tại.");
                 await connection.rollback();
-                return res.status(404).json({ message: "user không tồn tại." });
+                return res.status(404).json({ message: "User không tồn tại." });
             }
 
-            const [deleteRows] = await connection.execute("DELETE FROM `user` WHERE Username = ?", [itemId]);
+            const [updateRows] = await connection.execute("UPDATE `user` SET `Check` = 0 WHERE Username = ?", [itemId]);
 
-            if (deleteRows.affectedRows > 0) {
-                console.log("user đã được xóa thành công.");
+            if (updateRows.affectedRows > 0) {
+                console.log("Đã chặn tài khoản thành công.");
                 await connection.commit();
-                return res.status(200).json({ message: "user đã được xóa thành công." });
+                return res.status(200).json({ message: "Đã chặn tài khoản thành công." });
             } else {
-                console.log("Không có bản ghi nào được xóa.");
+                console.log("Không có bản ghi nào được cập nhật.");
                 await connection.rollback();
-                return res.status(500).json({ message: "Không có bản ghi nào được xóa." });
+                return res.status(500).json({ message: "Không có bản ghi nào được cập nhật." });
             }
         } catch (error) {
-            console.error("Lỗi xử lý yêu cầu DELETE:", error);
+            console.error("Lỗi xử lý yêu cầu UPDATE:", error);
             await connection.rollback();
             res.status(500).json({ message: "Đã xảy ra lỗi server." });
         } finally {

@@ -1,12 +1,9 @@
 <%- include('../layout/header.ejs') %>
 <%- include('../layout/aside.ejs') %>
-<!-- Content Wrapper. Contains page content -->
+
 <div class="content-wrapper">
-  <!-- Content Header (Page header) -->
   <section class="content-header">
-    <h1>
-      Quản lý danh mục
-    </h1>
+    <h1>Tạo tài khoản nhân viên & admin</h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
       <li><a href="#">Examples</a></li>
@@ -14,100 +11,100 @@
     </ol>
   </section>
 
-  <!-- Main content -->
   <section class="content">
-
-    <!-- Default box -->
     <div class="box">
-
       <div class="box-body">
-
-
         <form action="http://localhost:8082/admin/v1/accounts/create" method="post">
-
-          <!-- username -->
           <div class="form-group">
             <label for="exampleInputUsername1">Username</label>
             <input name="Username" type="text" class="form-control" id="exampleInputUsername1">
           </div>
         
-          <!-- email -->
           <div class="form-group">
             <label for="exampleInputEmail1">Email address</label>
             <input name="Email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
           </div>
         
-          <!-- password -->
           <div class="form-group">
             <label for="exampleInputPassword1">Password</label>
             <input name="Password" type="password" class="form-control" id="exampleInputPassword1">
           </div>
-        
-          <!-- check password -->
+
           <div class="form-group">
             <label for="exampleInputCheck1">Check</label>
-            <input name="Check" type="text" class="form-control" id="exampleInputCheck1" required>
+            <select name="Check" class="form-control" id="exampleInputCheck1" required>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
           </div>
-        
-          <!-- button submit -->
+
+          <div class="form-group">
+            <label for="IDStaffType">Staff Type</label>
+            <select name="IDStaffType" class="form-control" id="IDStaffType">
+              <!-- Options will be populated here by JavaScript -->
+            </select>
+          </div>
+
           <button type="submit" class="btn btn-primary btnSubmit"><i class="fa fa-save"></i> Submit</button>
           <a href="/admin/v1/accounts" class="btn btn-default"><i class="fa fa-arrow-left"></i> Trở lại</a>
-        
         </form>
-        
-
       </div>
-
     </div>
-
   </section>
-
 </div>
 
 <%- include("../layout/footer.ejs") %>
 
 <script>
-
-
-  // check empty
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      const response = await fetch('http://localhost:8082/admin/v1/stafftypes');
+      const staffTypes = await response.json();
+      const staffTypeSelect = document.querySelector("#IDStaffType");
+  
+      staffTypes.forEach(staffType => {
+        const option = document.createElement("option");
+        option.value = staffType.id;
+        option.textContent = staffType.name;
+        staffTypeSelect.appendChild(option);
+      });
+    } catch (error) {
+      console.error('Error loading staff types:', error);
+    }
+  });
+  
   const checkEmpty = () => {
     let email = document.querySelector("#exampleInputEmail1");
     let username = document.querySelector("#exampleInputUsername1");
     let check = document.querySelector("#exampleInputCheck1");
     let password = document.querySelector("#exampleInputPassword1");
-    if (email.value == "" || username.value == "" || password.value == "" || check.value == "") {
+    let staffType = document.querySelector("#IDStaffType"); // Corrected selector for staff type
+  
+    if (email.value == "" || username.value == "" || password.value == "" || check.value == "" || staffType.value == "") {
       return false;
     }
     return true;
   }
-
-  // check email
+  
   function checkEmail() {
     let email = document.querySelector("#exampleInputEmail1");
-    const regexEmail =
-      /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+    const regexEmail = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
     let isEmailError = !regexEmail.test(email.value);
     if (isEmailError) {
-      // Nếu có lỗi, bạn có thể thông báo lỗi hoặc thực hiện các hành động khác ở đây
       isEmailError = true;
       return isEmailError;
     }
     return isEmailError = false;
   }
-
-  // check length
-  // đúng 123@g.c
-  // phải có 123 , @ , g , c
+  
   function checkLength() {
-  //  let confirmPassword = document.querySelector("#exampleInputCheck1");
     let password = document.querySelector("#exampleInputPassword1");
-    console.log(password)
     if (password.value.length <= 5) {
       return false;
     }
     return true;
   }
-
+  
   const postRequired = async (requestBody) => {
     try {
       const response = await fetch('http://localhost:8082/admin/v1/accounts/create', {
@@ -125,6 +122,7 @@
         document.querySelector("#exampleInputPassword1").value = "";
         document.querySelector("#exampleInputCheck1").value = "";
         document.querySelector("#exampleInputEmail1").value = "";
+        document.querySelector("#IDStaffType").value = ""; // Corrected selector for staff type
       } else if (response.status === 409) {
         alert("Failed to create user: Duplicate data found");
       } else {
@@ -136,31 +134,33 @@
     }
   }
   
-  // Btn click
   let btn_submit = document.querySelector(".btnSubmit");
   btn_submit.addEventListener("click", async (e) => {
     e.preventDefault();
     if (checkEmpty() == false) {
       alert("Không để trống thông tin");
     } else {
-      // Additional checks can be added here
       if (checkLength() == false) {
         alert("Độ dài mật khẩu quá ngắn");
       } else if (checkEmail() == true) {
         alert("Email không hợp lệ");
       } else {
-        // Example data
-        const exampleData = {
-          Username: document.querySelector("#exampleInputUsername1").value,
-          Password: document.querySelector("#exampleInputPassword1").value,
-          Check: document.querySelector("#exampleInputCheck1").value,
-          Email: document.querySelector("#exampleInputEmail1").value,
-        };
+        const selectedStaffType = document.querySelector("#IDStaffType").value;
+        // Check if selected staff type is 2 or 3
+        if (selectedStaffType !== "2" && selectedStaffType !== "3") {
+          alert("Vui lòng chọn Staff Type là 2 hoặc 3");
+        } else {
+          const exampleData = {
+            Username: document.querySelector("#exampleInputUsername1").value,
+            Password: document.querySelector("#exampleInputPassword1").value,
+            Check: document.querySelector("#exampleInputCheck1").value,
+            Email: document.querySelector("#exampleInputEmail1").value,
+            IDStaffType: selectedStaffType,
+          };
   
-        // Call the postRequired function to send data
-        await postRequired(exampleData);
+          await postRequired(exampleData);
+        }
       }
     }
   });
-
 </script>
